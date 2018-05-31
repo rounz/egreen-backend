@@ -19,4 +19,7 @@ addCommandAlias(
 
 // while you're working, try putting "~wip" into your sbt console
 // ...but be prepared to let IntelliJ force you to reload!
-addCommandAlias("wip", ";fmt;test:compile")
+addCommandAlias(
+  "wip",
+  ";fmt;test:compile"
+)

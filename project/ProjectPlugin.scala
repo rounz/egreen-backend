@@ -53,7 +53,7 @@ object ProjectPlugin extends AutoPlugin {
       BuildInfoKey.action("lastCommitSha")(gitCommitHash)
     ),
     buildInfoPackage :=
-      s"${organization.value}.${(ThisBuild / name).value}.build",
+      s"${organization.value}.egreen.build",
     buildInfoOptions += BuildInfoOption.BuildTime,
     buildInfoOptions += BuildInfoOption.ToJson
   )
