@@ -1,5 +1,4 @@
-val Http4sVersion  = "0.18.12"
-val LogbackVersion = "1.2.3"
+import com.round.Dependencies._
 
 lazy val root = (project in file("."))
   .settings(
@@ -8,9 +7,18 @@ lazy val root = (project in file("."))
     version      := "0.0.1-SNAPSHOT",
     scalaVersion := "2.12.6",
     libraryDependencies ++= Seq(
-      "org.http4s"     %% "http4s-blaze-server" % Http4sVersion,
-      "org.http4s"     %% "http4s-circe"        % Http4sVersion,
-      "org.http4s"     %% "http4s-dsl"          % Http4sVersion,
-      "ch.qos.logback" % "logback-classic"      % LogbackVersion
+      Http4s.blaze,
+      Http4s.circe,
+      Http4s.dsl,
+      Logback.classic
     )
   )
+
+addCommandAlias(
+  "fmt",
+  ";scalafmtSbt;scalafmt;test:scalafmt"
+)
+
+// while you're working, try putting "~wip" into your sbt console
+// ...but be prepared to let IntelliJ force you to reload!
+addCommandAlias("wip", ";fmt;test:compile")
