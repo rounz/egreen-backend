@@ -1,11 +1,9 @@
 import com.round.Dependencies._
 
 lazy val root = (project in file("."))
+  .enablePlugins(com.round.ProjectPlugin)
   .settings(
-    organization := "com.round",
-    name         := "egreen-backend",
-    version      := "0.0.1-SNAPSHOT",
-    scalaVersion := "2.12.6",
+    name := "egreen-backend",
     libraryDependencies ++= Seq(
       Http4s.blaze,
       Http4s.circe,

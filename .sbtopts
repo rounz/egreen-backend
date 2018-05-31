@@ -3,4 +3,3 @@
 -J-Xms512M
 -J-Xmx2G
 -J-XX:ReservedCodeCacheSize=256M
--Dsbt.override.build.repos=true

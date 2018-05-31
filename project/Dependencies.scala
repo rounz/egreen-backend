@@ -10,6 +10,9 @@ object Dependencies {
     val kindProjector: ModuleID      = "org.spire-math"    %% "kind-projector"     % "0.9.6"
     val sbtRevolver: ModuleID        = "io.spray"          % "sbt-revolver"        % "0.9.1"
     val sbtHeader: ModuleID          = "de.heikoseeberger" % "sbt-header"          % "5.0.0"
+    val scalafix: ModuleID           = "ch.epfl.scala"     % "sbt-scalafix"        % "0.5.10"
+    val buildInfo: ModuleID          = "com.eed3si9n"      % "sbt-buildinfo"       % "0.7.0"
+    val scoverage: ModuleID          = "org.scoverage"     % "sbt-scoverage"       % "1.5.1"
   }
 
   object Http4s {
