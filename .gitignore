@@ -1,0 +1,59 @@
+*.class
+*.log
+
+# sbt specific
+.cache
+.history
+.lib/
+dist/*
+target/
+lib_managed/
+src_managed/
+project/boot/
+project/plugins/project/
+
+# previous BAM stuff
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.next
+release.properties
+*.swp
+*.swo
+*.o
+*.la
+*.lo
+.deps
+.libs
+src/native/Makefile
+src/native/config.*
+src/native/autom4te.cache
+src/native/libtool
+src/native/stamp-h1
+
+# Ignore IDEA
+.idea/
+*.iml
+*.class
+*.log
+
+# sbt specific
+.cache
+.history
+dist/*
+target/
+**/target
+*.class
+
+# eclipse
+*.classpath
+*.project
+*.settings
+*bin/
+
+#Haskell
+.stack-work/
+dist/
+autogen/
+
+
+.DS_Store
