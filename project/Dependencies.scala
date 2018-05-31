@@ -23,11 +23,12 @@ object Dependencies {
   object Scalatest {
     val version: String = "3.0.5"
 
-    val core: String = "org.scalatest" %% "scalatest" % version
+    val core: ModuleID = "org.scalatest" %% "scalatest" % version
   }
 
   object Logback {
-    val version: String   = "1.2.3"
+    val version: String = "1.2.3"
+
     val classic: ModuleID = "ch.qos.logback" % "logback-classic" % version
   }
 }
