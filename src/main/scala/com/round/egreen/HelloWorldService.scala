@@ -1,3 +1,5 @@
+// Copyright (c) 2018 Round, Inc.. All rights reserved.
+
 package com.round.egreen
 
 import cats.effect.Effect
