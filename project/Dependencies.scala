@@ -15,6 +15,22 @@ object Dependencies {
     val scoverage: ModuleID          = "org.scoverage"     % "sbt-scoverage"       % "1.5.1"
   }
 
+  object Cats {
+    val catsVersion: String   = "1.1.0"
+    val effectVersion: String = "0.10"
+
+    val core: ModuleID   = "org.typelevel" %% "cats-core"   % catsVersion
+    val effect: ModuleID = "org.typelevel" %% "cats-effect" % effectVersion
+  }
+
+  object Circe {
+    val version: String = "0.9.3"
+
+    val core: ModuleID    = "io.circe" %% "circe-generic" % version
+    val literal: ModuleID = "io.circe" %% "circe-literal" % version
+    val parser: ModuleID  = "io.circe" %% "circe-parser"  % version
+  }
+
   object Http4s {
     val version: String = "0.18.12"
 

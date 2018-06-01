@@ -5,6 +5,11 @@ lazy val root = (project in file("."))
   .settings(
     name := "egreen-backend",
     libraryDependencies ++= Seq(
+      Cats.core,
+      Cats.effect,
+      Circe.core,
+      Circe.literal,
+      Circe.parser,
       Http4s.blaze,
       Http4s.circe,
       Http4s.dsl,
