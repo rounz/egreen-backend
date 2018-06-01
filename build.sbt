@@ -27,5 +27,5 @@ addCommandAlias(
 // ...but be prepared to let IntelliJ force you to reload!
 addCommandAlias(
   "wip",
-  ";fmt;test:compile"
+  ";headerCreate;test:headerCreate;fmt;test:compile"
 )
