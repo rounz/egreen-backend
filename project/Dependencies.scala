@@ -5,10 +5,12 @@ import sbt._
 object Dependencies {
 
   object SbtPlugin {
+    val kindProjector: ModuleID = "org.spire-math" %% "kind-projector" % "0.9.6"
+
     val scalafmt: ModuleID           = "com.geirsson"      % "sbt-scalafmt"        % "1.6.0-RC1"
     val partialUnification: ModuleID = "org.lyranthe.sbt"  % "partial-unification" % "1.1.0"
-    val kindProjector: ModuleID      = "org.spire-math"    %% "kind-projector"     % "0.9.6"
     val sbtRevolver: ModuleID        = "io.spray"          % "sbt-revolver"        % "0.9.1"
+    val coursier: ModuleID           = "io.get-coursier"   % "sbt-coursier"        % "1.0.3"
     val sbtHeader: ModuleID          = "de.heikoseeberger" % "sbt-header"          % "5.0.0"
     val scalafix: ModuleID           = "ch.epfl.scala"     % "sbt-scalafix"        % "0.5.10"
     val buildInfo: ModuleID          = "com.eed3si9n"      % "sbt-buildinfo"       % "0.7.0"
