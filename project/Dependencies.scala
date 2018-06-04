@@ -18,6 +18,8 @@ object Dependencies {
     val scoverage: ModuleID          = "org.scoverage"     % "sbt-scoverage"       % "1.5.1"
   }
 
+  val typesafeConfig: ModuleID = "com.typesafe" % "config" % "1.3.3"
+
   object Cats {
     val catsVersion: String   = "1.1.0"
     val effectVersion: String = "0.10"
