@@ -14,6 +14,7 @@ object Dependencies {
     val sbtHeader: ModuleID          = "de.heikoseeberger" % "sbt-header"          % "5.0.0"
     val scalafix: ModuleID           = "ch.epfl.scala"     % "sbt-scalafix"        % "0.5.10"
     val buildInfo: ModuleID          = "com.eed3si9n"      % "sbt-buildinfo"       % "0.7.0"
+    val packager: ModuleID           = "com.typesafe.sbt"  % "sbt-native-packager" % "1.3.4"
     val scoverage: ModuleID          = "org.scoverage"     % "sbt-scoverage"       % "1.5.1"
   }
 

@@ -2,6 +2,7 @@ import com.round.Dependencies._
 
 lazy val root = (project in file("."))
   .enablePlugins(com.round.ProjectPlugin)
+  .enablePlugins(com.typesafe.sbt.packager.archetypes.JavaServerAppPackaging)
   .settings(
     name := "egreen-backend",
     libraryDependencies ++= Seq(
