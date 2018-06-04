@@ -22,7 +22,7 @@ object ServerStream {
 
   def stream[F[_]: Effect](implicit ec: ExecutionContext) =
     BlazeBuilder[F]
-      .bindHttp(9000, "0.0.0.0")
+      .bindHttp(System.getenv("PORT").toInt, "0.0.0.0")
       .mountService(coreService, "/")
       .serve
 }
