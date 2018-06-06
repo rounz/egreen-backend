@@ -55,4 +55,10 @@ object Dependencies {
 
     val classic: ModuleID = "ch.qos.logback" % "logback-classic" % version
   }
+
+  object Frontend {
+    val version: String = "0.0.4"
+
+    val build: ModuleID = "org.webjars.npm" % "round-inc__egreen-frontend" % version
+  }
 }
