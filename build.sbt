@@ -14,6 +14,7 @@ lazy val root = (project in file("."))
       Http4s.blaze,
       Http4s.circe,
       Http4s.dsl,
+      Frontend.build,
       typesafeConfig,
       Scalatest.core % "test",
       Logback.classic
