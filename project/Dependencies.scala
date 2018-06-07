@@ -44,6 +44,11 @@ object Dependencies {
     val dsl: ModuleID   = "org.http4s" %% "http4s-dsl"          % version
   }
 
+  object DB {
+    val redis: ModuleID   = "net.debasishg"     %% "redisclient"        % "3.7"
+    val mongodb: ModuleID = "org.mongodb.scala" %% "mongo-scala-driver" % "2.3.0"
+  }
+
   object Scalatest {
     val version: String = "3.0.5"
 

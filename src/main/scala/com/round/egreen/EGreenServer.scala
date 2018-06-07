@@ -4,11 +4,9 @@ package com.round.egreen
 
 import cats.effect.{Effect, IO}
 import cats.syntax.semigroupk._
-import com.round.egreen.http.{CoreHttp, FrontendHttp}
-import com.round.egreen.service.CoreService
-import com.typesafe.config.ConfigFactory
-import fs2.StreamApp
-import org.http4s.HttpService
+import com.round.egreen.module._
+import com.typesafe.config.{Config, ConfigFactory}
+import fs2.{Stream, StreamApp}
 import org.http4s.server.blaze.BlazeBuilder
 
 import scala.concurrent.ExecutionContext
@@ -16,20 +14,22 @@ import scala.concurrent.ExecutionContext
 object EGreenServer extends StreamApp[IO] {
   import scala.concurrent.ExecutionContext.Implicits.global
 
-  def stream(args: List[String], requestShutdown: IO[Unit]) = ServerStream.stream[IO]
+  def stream(args: List[String], requestShutdown: IO[Unit]): Stream[IO, StreamApp.ExitCode] =
+    ServerStream.stream[IO]
 }
 
 object ServerStream {
-  val config = ConfigFactory.load()
 
-  def coreService[F[_]: Effect] = new CoreHttp[F](new CoreService).service
+  def stream[F[_]: Effect](implicit ec: ExecutionContext): Stream[F, StreamApp.ExitCode] = {
+    val config: Config             = ConfigFactory.load()
+    val mongodbModule: MongoModule = new MongoModule(config)
+    val redisModule: RedisModule   = new RedisModule(config)
+    val httpModule: HttpModule[F]  = new HttpModule(mongodbModule, redisModule)
 
-  def frontendService[F[_]: Effect]: HttpService[F] =
-    new FrontendHttp[F].service
-
-  def stream[F[_]: Effect](implicit ec: ExecutionContext) =
     BlazeBuilder[F]
       .bindHttp(config.getInt("http.port"), "0.0.0.0")
-      .mountService(coreService <+> frontendService, "/")
+      .mountService(httpModule.coreService <+> httpModule.frontendService, "/")
+      .mountService(httpModule.commandService, "/command")
       .serve
+  }
 }

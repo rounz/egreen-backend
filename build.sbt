@@ -14,6 +14,8 @@ lazy val root = (project in file("."))
       Http4s.blaze,
       Http4s.circe,
       Http4s.dsl,
+      DB.redis,
+      DB.mongodb,
       Frontend.build,
       typesafeConfig,
       Scalatest.core % "test",

@@ -99,7 +99,6 @@ object ProjectPlugin extends AutoPlugin {
     "-language:implicitConversions",
     "-language:postfixOps",
     "-unchecked",
-    "-Xcheckinit",
     "-Xfuture",
     "-Xlint:adapted-args",
     "-Xlint:by-name-right-associative",
