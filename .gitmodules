@@ -1,4 +1,4 @@
 [submodule "egreen-frontend-builds"]
 	path = src/main/resources/egreen-frontend-builds
-	url = https://gitlab.com/round/egreen-frontend-builds.git
+	url = https://gitlab.com/round-square/egreen-frontend-builds.git
 	branch = master
