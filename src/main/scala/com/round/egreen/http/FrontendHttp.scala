@@ -10,7 +10,7 @@ class FrontendHttp[F[_]: Effect] extends Http4sDsl[F] {
 
   def static(file: String, request: Request[F]): F[Response[F]] =
     StaticFile
-      .fromResource("/META-INF/resources/webjars/round-inc__egreen-frontend/0.0.4/apps/admin/" + file, Some(request))
+      .fromResource("/egreen-frontend-builds/admin/" + file, Some(request))
       .getOrElseF(NotFound())
 
   val service: HttpService[F] = {
