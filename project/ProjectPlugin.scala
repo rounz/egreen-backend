@@ -41,6 +41,7 @@ object ProjectPlugin extends AutoPlugin {
         publishArtifact            := false,
         autoAPIMappings in Global  := true,
         coverageMinimum            := 100,
+        addCompilerPlugin(Dependencies.SbtPlugin.kindProjector),
         scalacOptions ++= commonScalacOptions ++ scalacOptionsFor212
       )
 

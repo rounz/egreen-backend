@@ -11,6 +11,7 @@ lazy val root = (project in file("."))
       Circe.core,
       Circe.literal,
       Circe.parser,
+      Crypto.jwtCirce,
       Http4s.blaze,
       Http4s.circe,
       Http4s.dsl,

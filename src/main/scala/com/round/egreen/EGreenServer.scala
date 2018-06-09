@@ -21,15 +21,13 @@ object EGreenServer extends StreamApp[IO] {
 object ServerStream {
 
   def stream[F[_]: Effect](implicit ec: ExecutionContext): Stream[F, StreamApp.ExitCode] = {
-    val config: Config             = ConfigFactory.load()
-    val mongodbModule: MongoModule = new MongoModule(config)
-    val redisModule: RedisModule   = new RedisModule(config)
-    val httpModule: HttpModule[F]  = new HttpModule(mongodbModule, redisModule)
+    val config: Config            = ConfigFactory.load()
+    val httpModule: HttpModule[F] = new HttpModule(config)
 
     BlazeBuilder[F]
       .bindHttp(config.getInt("http.port"), "0.0.0.0")
       .mountService(httpModule.coreService <+> httpModule.frontendService, "/")
-      .mountService(httpModule.commandService, "/command")
+      .mountService(httpModule.commandService, "/c")
       .serve
   }
 }

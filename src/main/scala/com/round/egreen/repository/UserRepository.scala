@@ -12,6 +12,7 @@ import io.circe.parser.decode
 import io.circe.syntax._
 
 trait UserRepository[F[_]] {
+  def checkUserExists(username: String)(implicit F: Effect[F]): F[Boolean]
   def getUser(username: String)(implicit F: Effect[F]): EitherT[F, String, User]
   def putUser(user: User)(implicit F: Effect[F]): EitherT[F, String, Unit]
 }
@@ -24,6 +25,11 @@ object UserRepository {
 class RedisUserRepository[F[_]](client: RedisClientPool) extends UserRepository[F] {
   import UserRepository._
   import RedisUserRepository._
+
+  def checkUserExists(username: String)(implicit F: Effect[F]): F[Boolean] =
+    F.delay(
+      client.withClient(_.exists(username))
+    )
 
   def getUser(username: String)(implicit F: Effect[F]): EitherT[F, String, User] =
     EitherT(

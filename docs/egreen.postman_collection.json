@@ -1,0 +1,48 @@
+{
+	"info": {
+		"_postman_id": "245fa0d7-eba9-44d7-bf77-504ee6cae5da",
+		"name": "egreen",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create User",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjp7InVzZXJuYW1lIjoiZW56aWVmIiwiZW5jcnlwdGVkUGFzc3dvcmQiOiJhYmMiLCJyb2xlcyI6W3siQWRtaW4iOnt9fV19LCJleHBpcmF0aW9uIjoxNjg2Mjg0NTk3LCJpc3N1ZWRBdCI6MTUyODQ5OTgzN30.jhbIjDc-04hR52cqdqX2kEklQ_yVX9XSrrFd23gcipQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"commandName\": \"com.round.egreen.cqrs.command.CreateUser\",\n    \"json\": \"{ \\\"username\\\": \\\"enzief\\\", \\\"encryptedPassword\\\": \\\"abc\\\", \\\"roles\\\": [ {\\\"Developer\\\": {} } ] }\"\n}"
+				},
+				"url": {
+					"raw": "http://egreen.herokuapp.com/command",
+					"protocol": "http",
+					"host": [
+						"egreen",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"command"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -36,6 +36,10 @@ object Dependencies {
     val parser: ModuleID  = "io.circe" %% "circe-parser"  % version
   }
 
+  object Crypto {
+    val jwtCirce: ModuleID = "com.pauldijou" %% "jwt-circe" % "0.16.0"
+  }
+
   object Http4s {
     val version: String = "0.18.12"
 

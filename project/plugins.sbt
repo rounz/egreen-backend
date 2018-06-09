@@ -1,7 +1,5 @@
 import com.round.Dependencies.SbtPlugin._
 
-addCompilerPlugin(kindProjector)
-
 addSbtPlugin(scalafmt)
 addSbtPlugin(scalafix)
 addSbtPlugin(partialUnification)
