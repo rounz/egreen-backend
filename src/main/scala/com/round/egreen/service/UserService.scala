@@ -14,6 +14,12 @@ final class UserService[F[_]](eventService: EventService[F], repo: UserRepositor
   import UserRepository._
   import UserService._
 
+  def checkUserExists(username: String)(implicit F: Effect[F]): F[Boolean] =
+    repo.checkUserExists(username)
+
+  def getUser(username: String)(implicit F: Effect[F]): EitherT[F, String, User] =
+    repo.getUser(username)
+
   def createUser(cmd: command.CreateUser)(implicit F: Effect[F]): EitherT[F, String, Json] =
     for {
       _ <- repo

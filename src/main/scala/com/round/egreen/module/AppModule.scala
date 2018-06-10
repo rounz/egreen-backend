@@ -61,8 +61,13 @@ class HttpModule[F[_]: Effect](config: Config) {
   val userService: UserService[F] =
     new UserService(eventService, userRepo)
 
+  val userAuth: UserAuth = new UserAuth(config)
+
+  val unauthService: HttpService[F] =
+    new UnauthHttp(userAuth, userService).service
+
   val commandService: HttpService[F] =
-    new CommandHttp[F](config, userService).service
+    new CommandHttp[F](userAuth, userService).service
 
   val coreService: HttpService[F] =
     new CoreHttp[F](new CoreService).service

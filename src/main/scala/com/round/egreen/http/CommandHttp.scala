@@ -8,7 +8,6 @@ import cats.implicits._
 import com.round.egreen.common.model._
 import com.round.egreen.cqrs.command
 import com.round.egreen.service.{UserAuth, UserService}
-import com.typesafe.config.Config
 import io.circe.{Decoder, Json}
 import io.circe.generic.auto._
 import io.circe.parser._
@@ -17,17 +16,17 @@ import org.http4s._
 import org.http4s.circe._
 import org.http4s.dsl.Http4sDsl
 
-class CommandHttp[F[_]: Effect](config: Config, userService: UserService[F]) extends Http4sDsl[F] {
+class CommandHttp[F[_]: Effect](userAuth: UserAuth, userService: UserService[F]) extends Http4sDsl[F] {
   import CommandHttp._
 
-  val service: HttpService[F] = (new UserAuth(config)) {
+  val service: HttpService[F] = userAuth {
     AuthedService[User, F] {
       case (request @ POST -> Root) as sender =>
         for {
           cmd <- request.as[command.CommandEnvelope]
           json <- (if (cmd.commandName == command.CreateUser.commandName) {
                      for {
-                       userCmd <- ensureCommand[command.CreateUser](cmd.json, sender, Set(Admin))
+                       userCmd <- ensureCommand[command.CreateUser, F](cmd.json, sender)
                        json    <- userService.createUser(userCmd)
                      } yield json
                    } else {
@@ -40,16 +39,19 @@ class CommandHttp[F[_]: Effect](config: Config, userService: UserService[F]) ext
         } yield response
     }
   }
-
-  private def ensureCommand[C: Decoder](json: String, sender: User, roles: Set[Role]): EitherT[F, String, C] =
-    EitherT
-      .fromEither[F](
-        parse(json).flatMap(_.as[C]).leftMap(_.toString)
-      )
-      .ensure(PERMISSION_DENIED)(_ => (roles + Developer).exists(sender.roles.contains))
 }
 
 object CommandHttp {
   val COMMAND_NOT_SUPPORTED = "command.not-supported"
   val PERMISSION_DENIED     = "permission.denied"
+
+  def ensureCommand[C: Decoder: command.Permission, F[_]: Effect](json: String, sender: User): EitherT[F, String, C] =
+    parseCommand[C, F](json).ensure(PERMISSION_DENIED) { _ =>
+      implicitly[command.Permission[C]].isAllowed(sender)
+    }
+
+  def parseCommand[C: Decoder, F[_]: Effect](json: String): EitherT[F, String, C] =
+    EitherT.fromEither[F](
+      parse(json).flatMap(_.as[C]).leftMap(_.toString)
+    )
 }

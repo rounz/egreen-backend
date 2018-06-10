@@ -30,15 +30,74 @@
 					"raw": "{\n    \"commandName\": \"com.round.egreen.cqrs.command.CreateUser\",\n    \"json\": \"{ \\\"username\\\": \\\"enzief\\\", \\\"encryptedPassword\\\": \\\"abc\\\", \\\"roles\\\": [ {\\\"Developer\\\": {} } ] }\"\n}"
 				},
 				"url": {
-					"raw": "http://egreen.herokuapp.com/command",
-					"protocol": "http",
+					"raw": "localhost:9000/c",
 					"host": [
-						"egreen",
-						"herokuapp",
-						"com"
+						"localhost"
 					],
+					"port": "9000",
 					"path": [
-						"command"
+						"c"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Check User Exists",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"commandName\": \"com.round.egreen.cqrs.command.CreateUser\",\n    \"json\": \"{ \\\"username\\\": \\\"enzief\\\", \\\"encryptedPassword\\\": \\\"abc\\\", \\\"roles\\\": [ {\\\"Developer\\\": {} } ] }\"\n}"
+				},
+				"url": {
+					"raw": "localhost:9000/auth/enzief",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"auth",
+						"enzief"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User Login",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"enzief\",\n    \"encryptedPassword\": \"abc\"\n}"
+				},
+				"url": {
+					"raw": "localhost:9000/auth",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"auth"
 					]
 				}
 			},

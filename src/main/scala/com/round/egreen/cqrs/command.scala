@@ -3,7 +3,7 @@
 package com.round.egreen.cqrs.command
 
 import cats.effect.Effect
-import com.round.egreen.common.model.Role
+import com.round.egreen.common.model._
 import io.circe.generic.auto._
 import org.http4s.EntityDecoder
 import org.http4s.circe._
@@ -17,6 +17,12 @@ object CommandEnvelope {
 
 sealed trait Command
 
+final case class Permission[T](authorizedRoles: Set[Role]) {
+
+  def isAllowed(user: User): Boolean =
+    (authorizedRoles + Developer).exists(user.roles.contains)
+}
+
 final case class CreateUser(
     username: String,
     encryptedPassword: String,
@@ -25,4 +31,17 @@ final case class CreateUser(
 
 object CreateUser {
   val commandName: String = classOf[CreateUser].getName
+
+  implicit val permission: Permission[CreateUser] =
+    Permission[CreateUser](Set(Admin))
+}
+
+final case class UserLogin(
+    username: String,
+    encryptedPassword: String
+) extends Command
+
+object UserLogin {
+  implicit def decoder[F[_]: Effect]: EntityDecoder[F, UserLogin] =
+    jsonOf[F, UserLogin]
 }

@@ -27,6 +27,7 @@ object ServerStream {
     BlazeBuilder[F]
       .bindHttp(config.getInt("http.port"), "0.0.0.0")
       .mountService(httpModule.coreService <+> httpModule.frontendService, "/")
+      .mountService(httpModule.unauthService, "/auth")
       .mountService(httpModule.commandService, "/c")
       .serve
   }
