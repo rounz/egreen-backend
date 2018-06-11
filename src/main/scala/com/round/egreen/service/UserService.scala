@@ -10,7 +10,7 @@ import com.round.egreen.cqrs.event
 import com.round.egreen.repository.UserRepository
 import io.circe.Json
 
-final class UserService[F[_]](eventService: EventService[F], repo: UserRepository[F]) {
+class UserService[F[_]](eventService: EventService[F], repo: UserRepository[F]) {
   import UserRepository._
   import UserService._
 

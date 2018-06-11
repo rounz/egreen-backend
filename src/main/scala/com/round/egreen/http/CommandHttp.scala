@@ -43,6 +43,7 @@ class CommandHttp[F[_]: Effect](userAuth: UserAuth, userService: UserService[F])
 
 object CommandHttp {
   val COMMAND_NOT_SUPPORTED = "command.not-supported"
+  val COMMAND_NOT_PARSABLE  = "command.not-parsable"
   val PERMISSION_DENIED     = "permission.denied"
 
   def ensureCommand[C: Decoder: command.Permission, F[_]: Effect](json: String, sender: User): EitherT[F, String, C] =
@@ -52,6 +53,6 @@ object CommandHttp {
 
   def parseCommand[C: Decoder, F[_]: Effect](json: String): EitherT[F, String, C] =
     EitherT.fromEither[F](
-      parse(json).flatMap(_.as[C]).leftMap(_.toString)
+      parse(json).flatMap(_.as[C]).leftMap(_ => COMMAND_NOT_PARSABLE)
     )
 }

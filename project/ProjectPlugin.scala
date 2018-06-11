@@ -6,7 +6,6 @@ import scalafix.sbt.ScalafixPlugin, ScalafixPlugin.autoImport._
 import sbt._
 import sbt.Keys._
 import sbtbuildinfo.BuildInfoPlugin, BuildInfoPlugin.autoImport._
-import scoverage.ScoverageKeys._
 
 import scala.sys.process._
 import scala.util._
@@ -40,7 +39,6 @@ object ProjectPlugin extends AutoPlugin {
         publishLocal               := {},
         publishArtifact            := false,
         autoAPIMappings in Global  := true,
-        coverageMinimum            := 100,
         addCompilerPlugin(Dependencies.SbtPlugin.kindProjector),
         scalacOptions ++= commonScalacOptions ++ scalacOptionsFor212
       )

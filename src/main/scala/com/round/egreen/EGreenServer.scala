@@ -5,6 +5,7 @@ package com.round.egreen
 import cats.effect.{Effect, IO}
 import cats.syntax.semigroupk._
 import com.round.egreen.module._
+import com.round.egreen.service.UserAuth
 import com.typesafe.config.{Config, ConfigFactory}
 import fs2.{Stream, StreamApp}
 import org.http4s.server.blaze.BlazeBuilder
@@ -21,8 +22,11 @@ object EGreenServer extends StreamApp[IO] {
 object ServerStream {
 
   def stream[F[_]: Effect](implicit ec: ExecutionContext): Stream[F, StreamApp.ExitCode] = {
-    val config: Config            = ConfigFactory.load()
-    val httpModule: HttpModule[F] = new HttpModule(config)
+    val config: Config             = ConfigFactory.load()
+    val mongodbModule: MongoModule = new MongoModule(config)
+    val redisModule: RedisModule   = new RedisModule(config)
+    val userAuth: UserAuth         = new UserAuth(config)
+    val httpModule: HttpModule[F]  = new HttpModule(mongodbModule, redisModule, userAuth)
 
     BlazeBuilder[F]
       .bindHttp(config.getInt("http.port"), "0.0.0.0")
