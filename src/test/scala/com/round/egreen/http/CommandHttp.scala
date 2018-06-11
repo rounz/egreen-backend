@@ -20,7 +20,9 @@ import org.http4s.headers.Authorization
 import org.scalatest.{Matchers, WordSpec}
 
 class CommandHttpSpec extends WordSpec with Matchers with Http4sDsl[IO] {
-  private val cmdCreateUser   = command.CreateUser("xxx", "abc", Admin :: Customer :: Nil)
+  import UserAuth.UserClaim
+
+  private val cmdCreateUser   = command.CreateUser("xxx", "abc", Set(Admin, Customer))
   private val cmdJson: String = cmdCreateUser.asJson.toString
 
   "CommandHttp object" should {
@@ -43,7 +45,7 @@ class CommandHttpSpec extends WordSpec with Matchers with Http4sDsl[IO] {
 
     "ensureCommand correctly" in {
       val parsed: Either[String, command.CreateUser] = CommandHttp
-        .ensureCommand[command.CreateUser, IO](cmdJson, User("", "", Admin :: Nil))
+        .ensureCommand[command.CreateUser, IO](cmdJson, UserClaim("", Set(Admin), 0, 0))
         .value
         .unsafeRunSync()
       parsed shouldBe Right(cmdCreateUser)
@@ -51,7 +53,7 @@ class CommandHttpSpec extends WordSpec with Matchers with Http4sDsl[IO] {
 
     "ensureCommand correctly with unauthorized sender" in {
       val parsed: Either[String, command.CreateUser] = CommandHttp
-        .ensureCommand[command.CreateUser, IO](cmdJson, User("", "", Nil))
+        .ensureCommand[command.CreateUser, IO](cmdJson, UserClaim("", Set.empty, 0, 0))
         .value
         .unsafeRunSync()
       parsed shouldBe Left(CommandHttp.PERMISSION_DENIED)
@@ -59,10 +61,10 @@ class CommandHttpSpec extends WordSpec with Matchers with Http4sDsl[IO] {
   }
 
   "CommandHttp object" should {
-    val config: Config = ConfigFactory.parseString("application.secret = abcd")
-    val auth: UserAuth = new UserAuth(config)
-    val sender: User   = User("asdf", "sdfsdf", Admin :: Nil)
-    val token: String  = auth.authToken(sender)
+    val config: Config    = ConfigFactory.parseString("application.secret = abcd")
+    val auth: UserAuth    = new UserAuth(config)
+    val sender: UserClaim = UserClaim("asdf", Set(Admin), 0, 0)
+    val token: String     = auth.authToken(User(sender.username, "", sender.roles))
 
     val service: HttpService[IO] = new CommandHttp(auth, MockUserService).service
 

@@ -5,5 +5,5 @@ package com.round.egreen.common.model
 final case class User(
     username: String,
     encryptedPassword: String,
-    roles: List[Role]
+    roles: Set[Role]
 )

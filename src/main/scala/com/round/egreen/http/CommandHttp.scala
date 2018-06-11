@@ -5,7 +5,6 @@ package com.round.egreen.http
 import cats.data.EitherT
 import cats.effect.Effect
 import cats.implicits._
-import com.round.egreen.common.model._
 import com.round.egreen.cqrs.command
 import com.round.egreen.service.{UserAuth, UserService}
 import io.circe.{Decoder, Json}
@@ -18,9 +17,10 @@ import org.http4s.dsl.Http4sDsl
 
 class CommandHttp[F[_]: Effect](userAuth: UserAuth, userService: UserService[F]) extends Http4sDsl[F] {
   import CommandHttp._
+  import UserAuth.UserClaim
 
   val service: HttpService[F] = userAuth {
-    AuthedService[User, F] {
+    AuthedService[UserClaim, F] {
       case (request @ POST -> Root) as sender =>
         for {
           cmd <- request.as[command.CommandEnvelope]
@@ -42,11 +42,14 @@ class CommandHttp[F[_]: Effect](userAuth: UserAuth, userService: UserService[F])
 }
 
 object CommandHttp {
+  import UserAuth.UserClaim
+
   val COMMAND_NOT_SUPPORTED = "command.not-supported"
   val COMMAND_NOT_PARSABLE  = "command.not-parsable"
   val PERMISSION_DENIED     = "permission.denied"
 
-  def ensureCommand[C: Decoder: command.Permission, F[_]: Effect](json: String, sender: User): EitherT[F, String, C] =
+  def ensureCommand[C: Decoder: command.Permission, F[_]: Effect](json: String,
+                                                                  sender: UserClaim): EitherT[F, String, C] =
     parseCommand[C, F](json).ensure(PERMISSION_DENIED) { _ =>
       implicitly[command.Permission[C]].isAllowed(sender)
     }

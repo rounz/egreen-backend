@@ -4,6 +4,7 @@ package com.round.egreen.cqrs.command
 
 import cats.effect.Effect
 import com.round.egreen.common.model._
+import com.round.egreen.service.UserAuth
 import io.circe.generic.auto._
 import org.http4s.EntityDecoder
 import org.http4s.circe._
@@ -19,14 +20,14 @@ sealed trait Command
 
 final case class Permission[T](authorizedRoles: Set[Role]) {
 
-  def isAllowed(user: User): Boolean =
+  def isAllowed(user: UserAuth.UserClaim): Boolean =
     (authorizedRoles + Developer).exists(user.roles.contains)
 }
 
 final case class CreateUser(
     username: String,
     encryptedPassword: String,
-    roles: List[Role]
+    roles: Set[Role]
 ) extends Command
 
 object CreateUser {

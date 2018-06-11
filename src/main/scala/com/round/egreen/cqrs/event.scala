@@ -20,7 +20,7 @@ sealed trait Event {
 final case class CreateUser(
     username: String,
     encryptedPassword: String,
-    roles: List[Role]
+    roles: Set[Role]
 ) extends Event {
 
   val envelope: EventEnvelope =

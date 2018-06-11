@@ -11,13 +11,15 @@ import org.http4s.headers.Authorization
 import org.scalatest.{Matchers, WordSpec}
 
 class UserAuthSpec extends WordSpec with Matchers with Http4sDsl[IO] {
-  private val config: Config = ConfigFactory.parseString("application.secret = abcd")
-  private val auth: UserAuth = new UserAuth(config)
-  private val user: User     = User("asdf", "sdfsdf", Admin :: Nil)
-  private val token: String  = auth.authToken(user)
+  import UserAuth.UserClaim
+
+  private val config: Config    = ConfigFactory.parseString("application.secret = abcd")
+  private val auth: UserAuth    = new UserAuth(config)
+  private val sender: UserClaim = UserClaim("asdf", Set(Admin), 0, 0)
+  private val token: String     = auth.authToken(User(sender.username, "", sender.roles))
 
   private val service: HttpService[IO] = auth {
-    AuthedService[User, IO] {
+    AuthedService[UserClaim, IO] {
       case GET -> Root as user => Ok(user.username)
     }
   }
