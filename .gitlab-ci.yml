@@ -21,7 +21,6 @@ before_script:
   - wget -qO - --no-check-certificate "https://github.com/sbt/sbt/releases/download/v$SBT_VERSION/sbt-$SBT_VERSION.tgz" | tar xz -C $SBT_HOME --strip-components=1
   - apk del wget
   - export PATH=${PATH}:${SBT_HOME}/bin
-  - sbt sbtVersion
 
 verify:
   stage: verify
@@ -37,10 +36,17 @@ test:
   only:
     - branches
 
-#deploy:
-#  stage: deploy
-#  script:
-#    - apk --no-cache --update add ruby ruby-dev
-#    - gem install --no-rdoc --no-ri dpl
-#    - dpl --provider=heroku --strategy=git -username=$HEROKU_USERNAME -password=$HEROKU_PASSWORD -app=$HEROKU_APP
-#    - dpl --provider=heroku --app=$HEROKU_APP --api-key=$HEROKU_API_KEY
+deploy:
+  stage: deploy
+  script:
+    - apk --no-cache --update add git
+    - echo "machine api.heroku.com"   >  ~/.netrc
+    - echo "  login $HEROKU_USERNAME" >> ~/.netrc
+    - echo "  password $HEROKU_GIT"   >> ~/.netrc
+    - echo "machine git.heroku.com"   >> ~/.netrc
+    - echo "  login $HEROKU_USERNAME" >> ~/.netrc
+    - echo "  password $HEROKU_GIT"   >> ~/.netrc
+    - git remote add heroku https://git.heroku.com/egreen.git
+    - git push heroku master
+  only:
+    - master
