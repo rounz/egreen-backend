@@ -1,8 +1,7 @@
-image: enzief/docker-sbt:latest
+image: enzief/egreen-ci:latest
 
 stages:
   - verify
-  - test
   - deploy
 
 variables:
@@ -11,21 +10,13 @@ variables:
 verify:
   stage: verify
   script:
-    - sbt headerCheck test:headerCheck scalafmtCheck test:scalafmtCheck scalafmtSbtCheck
-  only:
-    - branches
-
-test:
-  stage: test
-  script:
-    - sbt clean test
+    - sbt clean headerCheck test:headerCheck scalafmtCheck test:scalafmtCheck scalafmtSbtCheck test
   only:
     - branches
 
 deploy:
   stage: deploy
   script:
-    - apk --no-cache --update add git
     - echo "machine api.heroku.com"   >  ~/.netrc
     - echo "  login $HEROKU_USERNAME" >> ~/.netrc
     - echo "  password $HEROKU_GIT"   >> ~/.netrc
