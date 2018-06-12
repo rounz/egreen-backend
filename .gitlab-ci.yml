@@ -1,4 +1,4 @@
-image: openjdk:8-jre-alpine
+image: enzief/docker-sbt:latest
 
 stages:
   - verify
@@ -7,18 +7,6 @@ stages:
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
-  SBT_HOME: /usr/local/sbt
-
-before_script:
-  - apk --no-cache --update add bash wget
-  - mkdir -p "$SBT_HOME"
-  - wget -q --no-check-certificate -O /etc/apk/keys/sgerrand.rsa.pub https://raw.githubusercontent.com/sgerrand/alpine-pkg-glibc/master/sgerrand.rsa.pub
-  - wget -q --no-check-certificate https://github.com/sgerrand/alpine-pkg-glibc/releases/download/$GLIBC_VERSION/glibc-$GLIBC_VERSION.apk
-  - apk add glibc-$GLIBC_VERSION.apk
-  - rm glibc-$GLIBC_VERSION.apk
-  - wget -qO - --no-check-certificate "https://github.com/sbt/sbt/releases/download/v$SBT_VERSION/sbt-$SBT_VERSION.tgz" | tar xz -C $SBT_HOME --strip-components=1
-  - apk del wget
-  - export PATH=${PATH}:${SBT_HOME}/bin
 
 verify:
   stage: verify

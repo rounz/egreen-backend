@@ -2,6 +2,8 @@
 
 package com.round.egreen.service
 
+import java.util.UUID
+
 import cats.effect.IO
 import com.round.egreen.common.model._
 import com.typesafe.config.{Config, ConfigFactory}
@@ -15,8 +17,9 @@ class UserAuthSpec extends WordSpec with Matchers with Http4sDsl[IO] {
 
   private val config: Config    = ConfigFactory.parseString("application.secret = abcd")
   private val auth: UserAuth    = new UserAuth(config)
-  private val sender: UserClaim = UserClaim("asdf", Set(Admin), 0, 0)
-  private val token: String     = auth.authToken(User(sender.username, "", sender.roles))
+  private val userId: UUID      = UUID.randomUUID()
+  private val sender: UserClaim = UserClaim(userId, "asdf", Set(Admin), 0, 0)
+  private val token: String     = auth.authToken(User(userId, sender.username, "", sender.roles))
 
   private val service: HttpService[IO] = auth {
     AuthedService[UserClaim, IO] {

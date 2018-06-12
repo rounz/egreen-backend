@@ -11,6 +11,7 @@ import com.typesafe.config.Config
 import io.circe.Json
 import io.circe.generic.auto._
 import io.circe.syntax._
+import java.util.UUID
 import org.http4s._
 import org.http4s.headers.Authorization
 import org.http4s.server.AuthMiddleware
@@ -30,6 +31,7 @@ class UserAuth(config: Config) {
 
   def authToken(user: User): String = {
     val claim = UserClaim(
+      user.id,
       user.username,
       user.roles,
       Instant.now.plusSeconds(157784760).getEpochSecond,
@@ -46,8 +48,8 @@ class UserAuth(config: Config) {
         for {
           Authorization(Token(Bearer, token)) <- request.headers.get(Authorization)
           json                                <- JwtCirce.decodeJson(token, secret, algorithm :: Nil).toOption
-          u @ UserClaim(_, _, expr, _)        <- json.as[UserClaim].toOption if Instant.now.getEpochSecond <= expr
-        } yield u
+          claim                               <- json.as[UserClaim].toOption if Instant.now.getEpochSecond <= claim.expiration
+        } yield claim
       }
     }
 
@@ -64,7 +66,7 @@ class UserAuth(config: Config) {
 
 object UserAuth {
 
-  final case class UserClaim(username: String, roles: Set[Role], expiration: Long, issuedAt: Long)
+  final case class UserClaim(id: UUID, username: String, roles: Set[Role], expiration: Long, issuedAt: Long)
 
   val algorithm: JwtHmacAlgorithm = JwtAlgorithm.HS256
 

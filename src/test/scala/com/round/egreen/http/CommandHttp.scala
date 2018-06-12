@@ -2,6 +2,8 @@
 
 package com.round.egreen.http
 
+import java.util.UUID
+
 import cats.data.EitherT
 import cats.effect.{Effect, IO}
 import com.round.egreen.common.model._
@@ -22,6 +24,7 @@ import org.scalatest.{Matchers, WordSpec}
 class CommandHttpSpec extends WordSpec with Matchers with Http4sDsl[IO] {
   import UserAuth.UserClaim
 
+  private val userId: UUID    = UUID.randomUUID()
   private val cmdCreateUser   = command.CreateUser("xxx", "abc", Set(Admin, Customer))
   private val cmdJson: String = cmdCreateUser.asJson.toString
 
@@ -45,7 +48,7 @@ class CommandHttpSpec extends WordSpec with Matchers with Http4sDsl[IO] {
 
     "ensureCommand correctly" in {
       val parsed: Either[String, command.CreateUser] = CommandHttp
-        .ensureCommand[command.CreateUser, IO](cmdJson, UserClaim("", Set(Admin), 0, 0))
+        .ensureCommand[command.CreateUser, IO](cmdJson, UserClaim(userId, "", Set(Admin), 0, 0))
         .value
         .unsafeRunSync()
       parsed shouldBe Right(cmdCreateUser)
@@ -53,7 +56,7 @@ class CommandHttpSpec extends WordSpec with Matchers with Http4sDsl[IO] {
 
     "ensureCommand correctly with unauthorized sender" in {
       val parsed: Either[String, command.CreateUser] = CommandHttp
-        .ensureCommand[command.CreateUser, IO](cmdJson, UserClaim("", Set.empty, 0, 0))
+        .ensureCommand[command.CreateUser, IO](cmdJson, UserClaim(userId, "", Set.empty, 0, 0))
         .value
         .unsafeRunSync()
       parsed shouldBe Left(CommandHttp.PERMISSION_DENIED)
@@ -63,10 +66,10 @@ class CommandHttpSpec extends WordSpec with Matchers with Http4sDsl[IO] {
   "CommandHttp object" should {
     val config: Config    = ConfigFactory.parseString("application.secret = abcd")
     val auth: UserAuth    = new UserAuth(config)
-    val sender: UserClaim = UserClaim("asdf", Set(Admin), 0, 0)
-    val token: String     = auth.authToken(User(sender.username, "", sender.roles))
+    val sender: UserClaim = UserClaim(userId, "asdf", Set(Admin), 0, 0)
+    val token: String     = auth.authToken(User(userId, sender.username, "", sender.roles))
 
-    val service: HttpService[IO] = new CommandHttp(auth, MockUserService).service
+    val service: HttpService[IO] = new CommandHttp(auth, new MockUserService(userId)).service
 
     "parse and process CreateUser command" in {
       val response: Response[IO] = service.orNotFound
@@ -83,12 +86,12 @@ class CommandHttpSpec extends WordSpec with Matchers with Http4sDsl[IO] {
       response.status shouldBe Ok
       val Right(json) = parse(new String(response.body.compile.toVector.unsafeRunSync().toArray))
       val Right(user) = json.as[User]
-      user shouldBe User(cmdCreateUser.username, cmdCreateUser.encryptedPassword, cmdCreateUser.roles)
+      user shouldBe User(userId, cmdCreateUser.username, cmdCreateUser.encryptedPassword, cmdCreateUser.roles)
     }
   }
 }
 
-object MockUserService extends UserService[IO](null, null) {
+class MockUserService(userId: UUID) extends UserService[IO](null, null) {
   override def checkUserExists(username: String)(implicit F: Effect[IO]): IO[Boolean] =
     IO(false)
 
@@ -96,5 +99,5 @@ object MockUserService extends UserService[IO](null, null) {
     EitherT.leftT(UserRepository.USER_NOTFOUND)
 
   override def createUser(cmd: command.CreateUser)(implicit F: Effect[IO]): EitherT[IO, String, Json] =
-    EitherT.rightT(User(cmd.username, cmd.encryptedPassword, cmd.roles).asJson)
+    EitherT.rightT(User(userId, cmd.username, cmd.encryptedPassword, cmd.roles).asJson)
 }

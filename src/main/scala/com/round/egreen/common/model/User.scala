@@ -2,7 +2,10 @@
 
 package com.round.egreen.common.model
 
+import java.util.UUID
+
 final case class User(
+    id: UUID,
     username: String,
     encryptedPassword: String,
     roles: Set[Role]

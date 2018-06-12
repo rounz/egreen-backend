@@ -2,6 +2,8 @@
 
 package com.round.egreen.cqrs.event
 
+import java.util.UUID
+
 import com.round.egreen.common.model.Role
 import io.circe.generic.auto._
 import io.circe.syntax._
@@ -18,6 +20,7 @@ sealed trait Event {
 }
 
 final case class CreateUser(
+    id: UUID,
     username: String,
     encryptedPassword: String,
     roles: Set[Role]

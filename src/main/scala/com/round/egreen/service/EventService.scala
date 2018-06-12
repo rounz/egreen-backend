@@ -13,10 +13,11 @@ import io.circe.syntax._
 
 final class EventService[F[_]](repo: EventRepository[F], userRepo: UserRepository[F]) {
 
-  def createUser(evt: event.CreateUser)(implicit F: Effect[F]): EitherT[F, String, Json] =
+  def createUser(user: User)(implicit F: Effect[F]): EitherT[F, String, Json] =
     for {
-      _ <- repo.saveEvent(evt.envelope)
-      user = User(evt.username, evt.encryptedPassword, evt.roles)
+      _ <- repo.saveEvent(
+            event.CreateUser(user.id, user.username, user.encryptedPassword, user.roles).envelope
+          )
       _ <- userRepo.putUser(user)
     } yield user.asJson
 }
