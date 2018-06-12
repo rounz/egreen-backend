@@ -14,9 +14,10 @@ verify:
     - branches
 
 deploy:
-  image: alpine/git:latest
+  image: alpine:3.7
   stage: deploy
   script:
+    - apk --update --no-cache add git
     - echo "machine api.heroku.com"   >  ~/.netrc
     - echo "  login $HEROKU_USERNAME" >> ~/.netrc
     - echo "  password $HEROKU_GIT"   >> ~/.netrc
