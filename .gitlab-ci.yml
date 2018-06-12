@@ -1,5 +1,3 @@
-image: enzief/egreen-ci:latest
-
 stages:
   - verify
   - deploy
@@ -8,6 +6,7 @@ variables:
   GIT_SUBMODULE_STRATEGY: recursive
 
 verify:
+  image: enzief/egreen-ci:latest
   stage: verify
   script:
     - sbt clean headerCheck test:headerCheck scalafmtCheck test:scalafmtCheck scalafmtSbtCheck test
@@ -15,6 +14,7 @@ verify:
     - branches
 
 deploy:
+  image: alpine/git:latest
   stage: deploy
   script:
     - echo "machine api.heroku.com"   >  ~/.netrc
