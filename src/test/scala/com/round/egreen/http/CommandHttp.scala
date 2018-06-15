@@ -102,7 +102,6 @@ class CommandHttpSpec extends WordSpec with Matchers with Http4sDsl[IO] {
       uri     = Uri.uri("/")
     ).withBody(cmdCreateUser.copy(username = username).envelope.asJson)
       .unsafeRunSync()
-
 }
 
 class MockUserService(userId: UUID) extends UserService[IO](null, null) {

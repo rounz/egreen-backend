@@ -1,0 +1,30 @@
+syntax = "proto2";
+
+package com.round.egreen.cqrs.event;
+
+import "scalapb/scalapb.proto";
+
+option (scalapb.options) = {
+  single_file: true
+
+  import: "java.util.UUID"
+  import: "com.round.egreen.common._"
+  import: "com.round.egreen.common.model.Role"
+};
+
+message EventEnvelope {
+  option (scalapb.message).companion_extends = "EventEnvelopeCompanion";
+
+  optional int64 timestamp = 1;
+  optional string commandName = 2;
+  optional bytes payload = 3;
+}
+
+message CreateUser {
+  option (scalapb.message).extends = "Event";
+
+  optional string id = 1 [(scalapb.field).type = "UUID"];
+  optional string username = 2;
+  optional string encryptedPassword = 3;
+  repeated string roles = 4 [(scalapb.field).type = "Role"];
+}

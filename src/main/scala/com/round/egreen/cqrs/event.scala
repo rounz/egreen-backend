@@ -2,30 +2,16 @@
 
 package com.round.egreen.cqrs.event
 
-import java.util.UUID
+import cats.implicits._
+import scalapb.GeneratedMessage
 
-import com.round.egreen.common.model.Role
-import io.circe.generic.auto._
-import io.circe.syntax._
-
-final case class EventEnvelope(eventName: String, json: String)
-
-object EventEnvelope {
+trait EventEnvelopeCompanion { _: EventEnvelope.type =>
   val LAST_EVENT_NAME: String = "LAST_EVENT"
   val LAST_EVENT: Throwable   = new Throwable(LAST_EVENT_NAME)
 }
 
-sealed trait Event {
-  def envelope: EventEnvelope
-}
+trait Event { _: GeneratedMessage =>
 
-final case class CreateUser(
-    id: UUID,
-    username: String,
-    encryptedPassword: String,
-    roles: Set[Role]
-) extends Event {
-
-  val envelope: EventEnvelope =
-    EventEnvelope(getClass.getName, this.asJson.toString)
+  def envelope: EventEnvelope =
+    EventEnvelope(System.currentTimeMillis.some, getClass.getName.some, toByteString.some)
 }

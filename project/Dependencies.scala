@@ -15,9 +15,18 @@ object Dependencies {
     val scalafix: ModuleID           = "ch.epfl.scala"     % "sbt-scalafix"        % "0.5.10"
     val buildInfo: ModuleID          = "com.eed3si9n"      % "sbt-buildinfo"       % "0.7.0"
     val packager: ModuleID           = "com.typesafe.sbt"  % "sbt-native-packager" % "1.3.4"
+    val protoc: ModuleID             = "com.thesamet"      % "sbt-protoc"          % "0.99.18"
   }
 
   val typesafeConfig: ModuleID = "com.typesafe" % "config" % "1.3.3"
+
+  object ScalaPB {
+    private val org: String     = "com.thesamet.scalapb"
+    private val version: String = "0.7.4"
+
+    val compiler: ModuleID = org %% "compilerplugin"  % version
+    val runtime: ModuleID  = org %% "scalapb-runtime" % version % "protobuf"
+  }
 
   object Cats {
     val catsVersion: String   = "1.1.0"

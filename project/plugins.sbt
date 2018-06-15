@@ -8,3 +8,6 @@ addSbtPlugin(coursier)
 addSbtPlugin(sbtHeader)
 addSbtPlugin(buildInfo)
 addSbtPlugin(packager)
+addSbtPlugin(protoc)
+
+libraryDependencies += com.round.Dependencies.ScalaPB.compiler

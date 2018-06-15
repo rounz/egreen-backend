@@ -4,31 +4,19 @@ package com.round.egreen.module
 
 import cats.effect.Effect
 import com.redis.RedisClientPool
-import com.round.egreen.cqrs.event.EventEnvelope
 import com.round.egreen.http._
 import com.round.egreen.repository._
 import com.round.egreen.service._
 import com.typesafe.config.Config
-import org.bson.codecs.configuration.CodecRegistries._
-import org.bson.codecs.configuration.CodecRegistry
 import org.http4s.HttpService
 import org.mongodb.scala._
-import org.mongodb.scala.bson.codecs.DEFAULT_CODEC_REGISTRY
-import org.mongodb.scala.bson.codecs.Macros._
 
 class MongoModule(config: Config) {
 
   val mongoClient: MongoClient = MongoClient(config.getString("mongodb.uri"))
   val mongoDB: MongoDatabase   = mongoClient.getDatabase(config.getString("mongodb.dbname"))
 
-  val codecRegistry: CodecRegistry = fromRegistries(
-    fromProviders(classOf[EventEnvelope]),
-    DEFAULT_CODEC_REGISTRY
-  )
-
-  val eventCollection: MongoCollection[EventEnvelope] = mongoDB
-    .getCollection[EventEnvelope]("mongodb.event-collection")
-    .withCodecRegistry(codecRegistry)
+  val eventCollection: MongoCollection[Document] = mongoDB.getCollection(config.getString("mongodb.event-collection"))
 }
 
 class RedisModule(config: Config) {

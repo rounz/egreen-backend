@@ -2,6 +2,7 @@ import com.round.Dependencies._
 
 lazy val root = (project in file("."))
   .enablePlugins(com.round.ProjectPlugin)
+  .enablePlugins(com.round.ProtobufPlugin)
   .enablePlugins(com.typesafe.sbt.packager.archetypes.JavaServerAppPackaging)
   .settings(
     name := "egreen-backend",
@@ -17,6 +18,7 @@ lazy val root = (project in file("."))
       Http4s.dsl,
       DB.redis,
       DB.mongodb,
+      ScalaPB.runtime,
       typesafeConfig,
       Scalatest.core % "test",
       Logback.classic

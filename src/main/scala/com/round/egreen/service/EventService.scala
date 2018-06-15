@@ -4,6 +4,7 @@ package com.round.egreen.service
 
 import cats.data.EitherT
 import cats.effect.Effect
+import cats.implicits._
 import com.round.egreen.common.model.User
 import com.round.egreen.cqrs.event
 import com.round.egreen.repository.{EventRepository, UserRepository}
@@ -16,7 +17,14 @@ final class EventService[F[_]](repo: EventRepository[F], userRepo: UserRepositor
   def createUser(user: User)(implicit F: Effect[F]): EitherT[F, String, Json] =
     for {
       _ <- repo.saveEvent(
-            event.CreateUser(user.id, user.username, user.encryptedPassword, user.roles).envelope
+            event
+              .CreateUser(
+                user.id.some,
+                user.username.some,
+                user.encryptedPassword.some,
+                user.roles.toSeq
+              )
+              .envelope
           )
       _ <- userRepo.putUser(user)
     } yield user.asJson

@@ -9,6 +9,7 @@ import com.round.egreen.cqrs.event.EventEnvelope
 import fs2._
 import fs2.async.mutable.Queue
 import org.mongodb.scala._
+import org.mongodb.scala.bson.BsonBinary
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util._
@@ -22,7 +23,7 @@ object EventRepository {
   val QUEUE_SIZE = 1000
 }
 
-final class MongoEventRepository[F[_]](mongo: MongoCollection[EventEnvelope]) extends EventRepository[F] {
+final class MongoEventRepository[F[_]](mongo: MongoCollection[Document]) extends EventRepository[F] {
   import EventRepository._
 
   def eventStream(implicit F: Effect[F]): Stream[F, EventEnvelope] =
@@ -34,7 +35,7 @@ final class MongoEventRepository[F[_]](mongo: MongoCollection[EventEnvelope]) ex
 
   def saveEvent(event: EventEnvelope)(implicit F: Effect[F]): EitherT[F, String, Unit] =
     EitherT(
-      F.delay(mongo.insertOne(event).toFuture).flatMap { f =>
+      F.delay(mongo.insertOne(Document("payload" -> event.toByteArray)).toFuture).flatMap { f =>
         F.async { cb =>
           f.onComplete(
             r => cb(Either.fromTry(r.map(_ => ().asRight)))
@@ -44,7 +45,7 @@ final class MongoEventRepository[F[_]](mongo: MongoCollection[EventEnvelope]) ex
     )
 
   private class EventObserver(queue: Queue[F, Either[Throwable, EventEnvelope]])(implicit F: Effect[F])
-      extends Observer[EventEnvelope] {
+      extends Observer[Document] {
 
     private var seen: Long                         = 0
     private var subscription: Option[Subscription] = None
@@ -54,9 +55,9 @@ final class MongoEventRepository[F[_]](mongo: MongoCollection[EventEnvelope]) ex
       subscription.request(QUEUE_SIZE)
     }
 
-    override def onNext(result: EventEnvelope): Unit = {
+    override def onNext(doc: Document): Unit = {
       async.unsafeRunAsync(
-        queue.enqueue1(Right(result))
+        queue.enqueue1(Right(EventEnvelope.parseFrom(doc[BsonBinary]("payload").getData)))
       )(_ => IO.unit)
       seen += 1
       if (seen == QUEUE_SIZE) {
