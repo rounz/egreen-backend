@@ -10,16 +10,22 @@ class FrontendHttp[F[_]: Effect] extends Http4sDsl[F] {
 
   def static(file: String, request: Request[F]): F[Response[F]] =
     StaticFile
-      .fromResource("/egreen-frontend-builds/admin/" + file, Some(request))
+      .fromResource("/egreen-frontend-builds/" + file, Some(request))
       .getOrElseF(NotFound())
 
   val service: HttpService[F] = {
     HttpService[F] {
-      case request @ GET -> Root =>
-        static("index.html", request)
+      case request @ GET -> Root / "admin" =>
+        static("admin/index.html", request)
 
-      case request @ GET -> Root / path =>
-        static(path, request)
+      case request @ GET -> Root / "admin" / path =>
+        static("admin/" + path, request)
+
+      case request @ GET -> Root / "developer" =>
+        static("developer/index.html", request)
+
+      case request @ GET -> Root / "developer" / path =>
+        static("developer/" + path, request)
     }
   }
 }
