@@ -6,6 +6,7 @@ import cats.effect.Effect
 import com.round.egreen.common.model._
 import com.round.egreen.service.UserAuth
 import io.circe.generic.auto._
+import io.circe.syntax._
 import org.http4s.EntityDecoder
 import org.http4s.circe._
 
@@ -16,7 +17,9 @@ object CommandEnvelope {
     jsonOf[F, CommandEnvelope]
 }
 
-sealed trait Command
+sealed trait Command {
+  def envelope: CommandEnvelope
+}
 
 final case class Permission[T](authorizedRoles: Set[Role]) {
 
@@ -28,7 +31,11 @@ final case class CreateUser(
     username: String,
     encryptedPassword: String,
     roles: Set[Role]
-) extends Command
+) extends Command {
+
+  val envelope: CommandEnvelope =
+    CommandEnvelope(CreateUser.commandName, this.asJson.toString)
+}
 
 object CreateUser {
   val commandName: String = classOf[CreateUser].getName
@@ -40,9 +47,15 @@ object CreateUser {
 final case class UserLogin(
     username: String,
     encryptedPassword: String
-) extends Command
+) extends Command {
+
+  val envelope: CommandEnvelope =
+    CommandEnvelope(UserLogin.commandName, this.asJson.toString)
+}
 
 object UserLogin {
+  val commandName: String = classOf[UserLogin].getName
+
   implicit def decoder[F[_]: Effect]: EntityDecoder[F, UserLogin] =
     jsonOf[F, UserLogin]
 }

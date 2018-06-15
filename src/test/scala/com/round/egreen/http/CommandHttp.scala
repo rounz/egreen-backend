@@ -7,7 +7,7 @@ import java.util.UUID
 import cats.data.EitherT
 import cats.effect.{Effect, IO}
 import com.round.egreen.common.model._
-import com.round.egreen.cqrs.command
+import com.round.egreen.cqrs.command._
 import com.round.egreen.repository.UserRepository
 import com.round.egreen.service.{UserAuth, UserService}
 import com.typesafe.config.{Config, ConfigFactory}
@@ -25,70 +25,84 @@ class CommandHttpSpec extends WordSpec with Matchers with Http4sDsl[IO] {
   import UserAuth.UserClaim
 
   private val userId: UUID    = UUID.randomUUID()
-  private val cmdCreateUser   = command.CreateUser("xxx", "abc", Set(Admin, Customer))
+  private val cmdCreateUser   = CreateUser("xxx", "abc", Set(Admin, Customer))
   private val cmdJson: String = cmdCreateUser.asJson.toString
 
   "CommandHttp object" should {
 
     "parseCommand correctly" in {
-      val parsed: Either[String, command.CreateUser] = CommandHttp
-        .parseCommand[command.CreateUser, IO](cmdJson)
+      val parsed: Either[String, CreateUser] = CommandHttp
+        .parseCommand[CreateUser, IO](cmdJson)
         .value
         .unsafeRunSync()
       parsed shouldBe Right(cmdCreateUser)
     }
 
     "parseCommand failed with malformed input" in {
-      val parsed: Either[String, command.CreateUser] = CommandHttp
-        .parseCommand[command.CreateUser, IO]("")
+      val parsed: Either[String, CreateUser] = CommandHttp
+        .parseCommand[CreateUser, IO]("")
         .value
         .unsafeRunSync()
       parsed shouldBe Left(CommandHttp.COMMAND_NOT_PARSABLE)
     }
 
     "ensureCommand correctly" in {
-      val parsed: Either[String, command.CreateUser] = CommandHttp
-        .ensureCommand[command.CreateUser, IO](cmdJson, UserClaim(userId, "", Set(Admin), 0, 0))
+      val parsed: Either[String, CreateUser] = CommandHttp
+        .ensureCommand[CreateUser, IO](cmdJson, UserClaim(userId, "", Set(Admin), 0, 0))
         .value
         .unsafeRunSync()
       parsed shouldBe Right(cmdCreateUser)
     }
 
     "ensureCommand correctly with unauthorized sender" in {
-      val parsed: Either[String, command.CreateUser] = CommandHttp
-        .ensureCommand[command.CreateUser, IO](cmdJson, UserClaim(userId, "", Set.empty, 0, 0))
+      val parsed: Either[String, CreateUser] = CommandHttp
+        .ensureCommand[CreateUser, IO](cmdJson, UserClaim(userId, "", Set.empty, 0, 0))
         .value
         .unsafeRunSync()
       parsed shouldBe Left(CommandHttp.PERMISSION_DENIED)
     }
   }
 
-  "CommandHttp object" should {
+  "CommandHttp service" should {
     val config: Config    = ConfigFactory.parseString("application.secret = abcd")
     val auth: UserAuth    = new UserAuth(config)
     val sender: UserClaim = UserClaim(userId, "asdf", Set(Admin), 0, 0)
-    val token: String     = auth.authToken(User(userId, sender.username, "", sender.roles))
 
     val service: HttpService[IO] = new CommandHttp(auth, new MockUserService(userId)).service
 
     "parse and process CreateUser command" in {
+      val token: String = auth.authToken(User(userId, sender.username, "", sender.roles))
       val response: Response[IO] = service.orNotFound
-        .run(
-          Request[IO](
-            method  = Method.POST,
-            headers = Headers(Authorization(Credentials.Token(AuthScheme.Bearer, token)) :: Nil),
-            uri     = Uri.uri("/")
-          ).withBody(command.CommandEnvelope(command.CreateUser.commandName, cmdJson).asJson)
-            .unsafeRunSync()
-        )
+        .run(createUserRequest(cmdCreateUser.username, token))
         .unsafeRunSync()
 
       response.status shouldBe Ok
-      val Right(json) = parse(new String(response.body.compile.toVector.unsafeRunSync().toArray))
-      val Right(user) = json.as[User]
+      val Right(user) = parse(new String(response.body.compile.toVector.unsafeRunSync().toArray))
+        .flatMap(_.as[User])
       user shouldBe User(userId, cmdCreateUser.username, cmdCreateUser.encryptedPassword, cmdCreateUser.roles)
     }
+
+    "parse and process dev CreateUser with no permission" in {
+      val token: String = auth.authToken(User(userId, sender.username, "", Set.empty))
+      val response: Response[IO] = service.orNotFound
+        .run(createUserRequest("egreen", token))
+        .unsafeRunSync()
+
+      response.status shouldBe Ok
+      val Right(user) = parse(new String(response.body.compile.toVector.unsafeRunSync().toArray))
+        .flatMap(_.as[User])
+      user shouldBe User(userId, "egreen", cmdCreateUser.encryptedPassword, cmdCreateUser.roles)
+    }
   }
+
+  private def createUserRequest(username: String, token: String): Request[IO] =
+    Request[IO](
+      method  = Method.POST,
+      headers = Headers(Authorization(Credentials.Token(AuthScheme.Bearer, token)) :: Nil),
+      uri     = Uri.uri("/")
+    ).withBody(cmdCreateUser.copy(username = username).envelope.asJson)
+      .unsafeRunSync()
+
 }
 
 class MockUserService(userId: UUID) extends UserService[IO](null, null) {
@@ -98,6 +112,6 @@ class MockUserService(userId: UUID) extends UserService[IO](null, null) {
   override def getUser(username: String)(implicit F: Effect[IO]): EitherT[IO, String, User] =
     EitherT.leftT(UserRepository.USER_NOTFOUND)
 
-  override def createUser(cmd: command.CreateUser)(implicit F: Effect[IO]): EitherT[IO, String, Json] =
+  override def createUser(cmd: CreateUser)(implicit F: Effect[IO]): EitherT[IO, String, Json] =
     EitherT.rightT(User(userId, cmd.username, cmd.encryptedPassword, cmd.roles).asJson)
 }
