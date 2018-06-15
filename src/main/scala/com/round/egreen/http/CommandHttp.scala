@@ -5,6 +5,7 @@ package com.round.egreen.http
 import cats.data.EitherT
 import cats.effect.Effect
 import cats.implicits._
+import com.round.egreen.common.model.Error
 import com.round.egreen.cqrs.command._
 import com.round.egreen.service.{UserAuth, UserService}
 import io.circe.{Decoder, Json}
@@ -36,7 +37,7 @@ class CommandHttp[F[_]: Effect](userAuth: UserAuth, userService: UserService[F])
                      EitherT.leftT[F, Json](COMMAND_NOT_SUPPORTED)
                    }).value
           response <- json.fold(
-                       e => BadRequest(s"{ error: $e }".asJson),
+                       e => BadRequest(Error(e).asJson),
                        Ok(_)
                      )
         } yield response
