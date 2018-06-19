@@ -16,12 +16,13 @@ message EventEnvelope {
   option (scalapb.message).companion_extends = "EventEnvelopeCompanion";
 
   optional int64 timestamp = 1;
-  optional string commandName = 2;
+  optional string eventName = 2;
   optional bytes payload = 3;
 }
 
 message CreateUser {
   option (scalapb.message).extends = "Event";
+  option (scalapb.message).companion_extends = "EventCompanion[CreateUser]";
 
   optional string id = 1 [(scalapb.field).type = "UUID"];
   optional string username = 2;

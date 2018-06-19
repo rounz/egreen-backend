@@ -33,13 +33,16 @@ class RedisModule(config: Config) {
   )
 }
 
-class HttpModule[F[_]: Effect](mongodbModule: MongoModule, redisModule: RedisModule, userAuth: UserAuth) {
+class HttpModule[F[_]: Effect](mongodbModule: MongoModule,
+                               redisModule: RedisModule,
+                               userAuth: UserAuth,
+                               config: Config) {
 
   val eventRepo: EventRepository[F] =
     new MongoEventRepository(mongodbModule.eventCollection)
 
   val userRepo: UserRepository[F] =
-    new RedisUserRepository(redisModule.client)
+    new RedisUserRepository(redisModule.client, config)
 
   val eventService: EventService[F] =
     new EventService(eventRepo, userRepo)
