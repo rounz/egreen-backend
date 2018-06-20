@@ -4,7 +4,7 @@ package com.round.egreen.http
 
 import cats.data.EitherT
 import cats.effect.Effect
-import cats.implicits._
+import com.round.egreen.common.model.Error
 import com.round.egreen.cqrs.command
 import com.round.egreen.service.{UserAuth, UserService}
 import io.circe.generic.auto._
@@ -18,9 +18,11 @@ class UnauthHttp[F[_]: Effect](userAuth: UserAuth, userService: UserService[F]) 
 
   val service: HttpService[F] = HttpService[F] {
     case GET -> Root / username =>
-      userService.checkUserExists(username) >>= {
-        if (_) Conflict() else Ok()
-      }
+      userService
+        .checkUserExists(username)
+        .semiflatMap(if (_) Conflict() else Ok())
+        .leftSemiflatMap(e => InternalServerError(Error(e).asJson))
+        .merge
 
     case request @ POST -> Root =>
       (for {

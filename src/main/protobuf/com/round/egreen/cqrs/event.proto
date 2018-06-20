@@ -9,7 +9,7 @@ option (scalapb.options) = {
 
   import: "java.util.UUID"
   import: "com.round.egreen.common._"
-  import: "com.round.egreen.common.model.Role"
+  import: "com.round.egreen.common.model._"
 };
 
 message EventEnvelope {
@@ -28,4 +28,17 @@ message CreateUser {
   optional string username = 2;
   optional string encryptedPassword = 3;
   repeated string roles = 4 [(scalapb.field).type = "Role"];
+}
+
+message UpdateCustomer {
+  option (scalapb.message).extends = "Event";
+  option (scalapb.message).companion_extends = "EventCompanion[UpdateCustomer]";
+
+  optional string id = 1 [(scalapb.field).type = "UUID"];
+  optional string username = 2;
+  optional string encryptedPassword = 3;
+  optional string fullName = 4;
+  optional string phoneNumber = 5;
+  optional string address = 6;
+  optional string district = 7 [(scalapb.field).type = "District"];
 }

@@ -31,8 +31,13 @@ class CommandHttp[F[_]: Effect](userAuth: UserAuth, userService: UserService[F])
                                    .ensure(PERMISSION_DENIED) {
                                      _.username == "egreen" || CreateUser.permission.isAllowed(sender)
                                    }
-                       json <- userService.createUser(userCmd)
-                     } yield json
+                       user <- userService.createUser(userCmd)
+                     } yield user.asJson
+                   } else if (cmd.commandName == CreateCustomer.commandName) {
+                     for {
+                       userCmd  <- ensureCommand[CreateCustomer, F](cmd.json, sender)
+                       customer <- userService.createCustomer(userCmd)
+                     } yield customer.asJson
                    } else {
                      EitherT.leftT[F, Json](COMMAND_NOT_SUPPORTED)
                    }).value

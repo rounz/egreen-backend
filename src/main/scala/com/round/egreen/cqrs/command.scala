@@ -2,13 +2,18 @@
 
 package com.round.egreen.cqrs.command
 
+import java.util.UUID
+
 import cats.effect.Effect
 import com.round.egreen.common.model._
 import com.round.egreen.service.UserAuth
+import io.circe.Encoder
 import io.circe.generic.auto._
 import io.circe.syntax._
 import org.http4s.EntityDecoder
 import org.http4s.circe._
+
+import scala.reflect.ClassTag
 
 final case class CommandEnvelope(commandName: String, json: String)
 
@@ -17,8 +22,14 @@ object CommandEnvelope {
     jsonOf[F, CommandEnvelope]
 }
 
-sealed trait Command {
-  def envelope: CommandEnvelope
+sealed trait Command[C <: Command[C]] { self: C =>
+
+  def envelope(implicit C: ClassTag[C], E: Encoder[C]): CommandEnvelope =
+    CommandEnvelope(C.runtimeClass.getName, self.asJson.toString)
+}
+
+sealed trait CommandCompanion[C <: Command[C]] {
+  def commandName(implicit C: ClassTag[C]): String = C.runtimeClass.getName
 }
 
 final case class Permission[T](authorizedRoles: Set[Role]) {
@@ -31,31 +42,49 @@ final case class CreateUser(
     username: String,
     encryptedPassword: String,
     roles: Set[Role]
-) extends Command {
+) extends Command[CreateUser]
 
-  val envelope: CommandEnvelope =
-    CommandEnvelope(CreateUser.commandName, this.asJson.toString)
-}
-
-object CreateUser {
-  val commandName: String = classOf[CreateUser].getName
+object CreateUser extends CommandCompanion[CreateUser] {
 
   implicit val permission: Permission[CreateUser] =
     Permission[CreateUser](Set(Admin))
 }
 
+final case class CreateCustomer(
+    username: String,
+    encryptedPassword: String,
+    fullName: String,
+    phoneNumber: String,
+    address: String,
+    district: District
+) extends Command[CreateCustomer]
+
+object CreateCustomer extends CommandCompanion[CreateCustomer] {
+  implicit val permission: Permission[CreateCustomer] =
+    Permission[CreateCustomer](Set(Admin))
+}
+
+final case class UpdateCustomer(
+    id: UUID,
+    username: String,
+    encryptedPassword: String,
+    fullName: String,
+    phoneNumber: String,
+    address: String,
+    district: District
+) extends Command[UpdateCustomer]
+
+object UpdateCustomer extends CommandCompanion[UpdateCustomer] {
+  implicit val permission: Permission[UpdateCustomer] =
+    Permission[UpdateCustomer](Set(Admin))
+}
+
 final case class UserLogin(
     username: String,
     encryptedPassword: String
-) extends Command {
+) extends Command[UserLogin]
 
-  val envelope: CommandEnvelope =
-    CommandEnvelope(UserLogin.commandName, this.asJson.toString)
-}
-
-object UserLogin {
-  val commandName: String = classOf[UserLogin].getName
-
+object UserLogin extends CommandCompanion[UserLogin] {
   implicit def decoder[F[_]: Effect]: EntityDecoder[F, UserLogin] =
     jsonOf[F, UserLogin]
 }

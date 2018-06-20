@@ -13,7 +13,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjp7InVzZXJuYW1lIjoiZW56aWVmIiwiZW5jcnlwdGVkUGFzc3dvcmQiOiJhYmMiLCJyb2xlcyI6W3siQWRtaW4iOnt9fV19LCJleHBpcmF0aW9uIjoxNjg2Mjg0NTk3LCJpc3N1ZWRBdCI6MTUyODQ5OTgzN30.jhbIjDc-04hR52cqdqX2kEklQ_yVX9XSrrFd23gcipQ",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjMwNTY2MDUzLWQwYjEtNGE3OC04YWY1LTQxZmJkZThmMzA0MiIsInVzZXJuYW1lIjoiZWdyZWVuIiwicm9sZXMiOlt7IkRldmVsb3BlciI6e319XSwiZXhwaXJhdGlvbiI6MTY4NzAyMzM1MCwiaXNzdWVkQXQiOjE1MjkyMzg1OTB9.CcGPHlmKUfUFfCGMfAQR5hPVitb6o9-etTXA2dM4I0k",
 							"type": "string"
 						}
 					]
@@ -27,10 +27,11 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"commandName\": \"com.round.egreen.cqrs.command.CreateUser\",\n    \"json\": \"{ \\\"username\\\": \\\"enzief\\\", \\\"encryptedPassword\\\": \\\"abc\\\", \\\"roles\\\": [ {\\\"Developer\\\": {} } ] }\"\n}"
+					"raw": "{\n    \"commandName\": \"com.round.egreen.cqrs.command.CreateUser\",\n    \"json\": \"{ \\\"username\\\": \\\"meof\\\", \\\"encryptedPassword\\\": \\\"abc\\\", \\\"roles\\\": [ {\\\"Developer\\\": {} } ] }\"\n}"
 				},
 				"url": {
-					"raw": "localhost:9000/c",
+					"raw": "http://localhost:9000/c",
+					"protocol": "http",
 					"host": [
 						"localhost"
 					],
@@ -60,7 +61,8 @@
 					"raw": "{\n    \"commandName\": \"com.round.egreen.cqrs.command.CreateUser\",\n    \"json\": \"{ \\\"username\\\": \\\"enzief\\\", \\\"encryptedPassword\\\": \\\"abc\\\", \\\"roles\\\": [ {\\\"Developer\\\": {} } ] }\"\n}"
 				},
 				"url": {
-					"raw": "localhost:9000/auth/enzief",
+					"raw": "http://localhost:9000/auth/enzief",
+					"protocol": "http",
 					"host": [
 						"localhost"
 					],
@@ -88,16 +90,55 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"username\": \"enzief\",\n    \"encryptedPassword\": \"abc\"\n}"
+					"raw": "{\n    \"username\": \"egreen\",\n    \"encryptedPassword\": \"abc\"\n}"
 				},
 				"url": {
-					"raw": "localhost:9000/auth",
+					"raw": "http://localhost:9000/auth",
+					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "9000",
 					"path": [
 						"auth"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Customer",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjYzNTE3ZGQyLWJmN2EtNDYwZi1hZjUzLWRhOGNiMjQ5ZTZlZiIsInVzZXJuYW1lIjoiZWdyZWVuIiwicm9sZXMiOlt7IkRldmVsb3BlciI6e319XSwiZXhwaXJhdGlvbiI6MTY4NzIyODQwOCwiaXNzdWVkQXQiOjE1Mjk0NDM2NDh9.4NPWx4Ksn2LLdpwBysIX71EY8Q1PWnMbbDmLhaplu0M",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"commandName\": \"com.round.egreen.cqrs.command.CreateCustomer\",\n    \"json\": \"{ \\\"username\\\": \\\"meof\\\", \\\"encryptedPassword\\\": \\\"abc\\\", \\\"fullName\\\": \\\"Mai Xuan Thua\\\", \\\"phoneNumber\\\": \\\"098767545321\\\", \\\"address\\\": \\\"australia\\\", \\\"district\\\": { \\\"GoVap\\\": {} } }\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:9000/c",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"c"
 					]
 				}
 			},

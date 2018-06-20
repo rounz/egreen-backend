@@ -11,7 +11,6 @@ import com.round.egreen.cqrs.command._
 import com.round.egreen.repository.UserRepository
 import com.round.egreen.service.{UserAuth, UserService}
 import com.typesafe.config.{Config, ConfigFactory}
-import io.circe.Json
 import io.circe.generic.auto._
 import io.circe.parser.parse
 import io.circe.syntax._
@@ -105,12 +104,12 @@ class CommandHttpSpec extends WordSpec with Matchers with Http4sDsl[IO] {
 }
 
 class MockUserService(userId: UUID) extends UserService[IO](null, null) {
-  override def checkUserExists(username: String)(implicit F: Effect[IO]): IO[Boolean] =
-    IO(false)
+  override def checkUserExists(username: String)(implicit F: Effect[IO]): EitherT[IO, String, Boolean] =
+    EitherT.rightT(false)
 
   override def getUser(username: String)(implicit F: Effect[IO]): EitherT[IO, String, User] =
     EitherT.leftT(UserRepository.USER_NOTFOUND)
 
-  override def createUser(cmd: CreateUser)(implicit F: Effect[IO]): EitherT[IO, String, Json] =
-    EitherT.rightT(User(userId, cmd.username, cmd.encryptedPassword, cmd.roles).asJson)
+  override def createUser(cmd: CreateUser)(implicit F: Effect[IO]): EitherT[IO, String, User] =
+    EitherT.rightT(User(userId, cmd.username, cmd.encryptedPassword, cmd.roles))
 }

@@ -4,7 +4,7 @@ package com.round.egreen
 
 import java.util.UUID
 
-import com.round.egreen.common.model.Role
+import com.round.egreen.common.model.{District, Role}
 import io.circe.generic.auto._
 import io.circe.parser._
 import io.circe.syntax._
@@ -16,4 +16,7 @@ package object common {
 
   implicit val roleTMap: TypeMapper[String, Role] =
     TypeMapper[String, Role](parse(_).flatMap(_.as[Role]).right.get)(_.asJson.toString)
+
+  implicit val districtTMap: TypeMapper[String, District] =
+    TypeMapper[String, District](parse(_).flatMap(_.as[District]).right.get)(_.asJson.toString)
 }
