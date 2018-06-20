@@ -12,19 +12,17 @@ import org.http4s.headers.`Content-Type`
 
 class CoreHttp[F[_]: Effect](coreService: CoreService[F]) extends Http4sDsl[F] {
 
-  val service: HttpService[F] = {
-    HttpService[F] {
-      case GET -> Root / "health" =>
-        for {
-          health   <- coreService.health
-          response <- Ok(health, `Content-Type`(MediaType.`application/json`))
-        } yield response
+  val service: HttpService[F] = HttpService[F] {
+    case GET -> Root / "health" =>
+      for {
+        health   <- coreService.health
+        response <- Ok(health, `Content-Type`(MediaType.`application/json`))
+      } yield response
 
-      case GET -> Root / "version" =>
-        for {
-          buildInfo <- coreService.buildInfo
-          response  <- Ok(buildInfo, `Content-Type`(MediaType.`application/json`))
-        } yield response
-    }
+    case GET -> Root / "version" =>
+      for {
+        buildInfo <- coreService.buildInfo
+        response  <- Ok(buildInfo, `Content-Type`(MediaType.`application/json`))
+      } yield response
   }
 }
