@@ -33,8 +33,7 @@ class UnauthHttp[F[_]: Effect](userAuth: UserAuth, userService: UserService[F]) 
                  .ensure(Response[F](Unauthorized))(_.encryptedPassword == cmd.encryptedPassword)
         response <- EitherT.right[Response[F]](
                      Ok(
-                       user.asJson,
-                       Authorization(Credentials.Token(AuthScheme.Bearer, userAuth.authToken(user)))
+                       headers = Authorization(Credentials.Token(AuthScheme.Bearer, userAuth.authToken(user)))
                      )
                    )
       } yield response).merge
