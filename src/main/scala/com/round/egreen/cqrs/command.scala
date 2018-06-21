@@ -50,6 +50,15 @@ object CreateUser extends CommandCompanion[CreateUser] {
     Permission[CreateUser](Set(Admin))
 }
 
+final case class GetAllUsers(
+    )
+    extends Command[GetAllUsers]
+
+object GetAllUsers extends CommandCompanion[GetAllUsers] {
+  implicit val permission: Permission[GetAllUsers] =
+    Permission[GetAllUsers](Set(Admin))
+}
+
 final case class CreateCustomer(
     username: String,
     encryptedPassword: String,
@@ -77,6 +86,15 @@ final case class UpdateCustomer(
 object UpdateCustomer extends CommandCompanion[UpdateCustomer] {
   implicit val permission: Permission[UpdateCustomer] =
     Permission[UpdateCustomer](Set(Admin))
+}
+
+final case class GetCustomer(
+    userId: UUID
+) extends Command[GetCustomer]
+
+object GetCustomer extends CommandCompanion[GetCustomer] {
+  implicit val permission: Permission[GetCustomer] =
+    Permission[GetCustomer](Set(Admin))
 }
 
 final case class UserLogin(

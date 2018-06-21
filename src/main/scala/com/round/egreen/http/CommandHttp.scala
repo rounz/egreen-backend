@@ -25,6 +25,7 @@ class CommandHttp[F[_]: Effect](userAuth: UserAuth, userService: UserService[F])
       case (request @ POST -> Root) as sender =>
         for {
           cmd <- request.as[CommandEnvelope]
+
           json <- (if (cmd.commandName == CreateUser.commandName) {
                      for {
                        userCmd <- parseCommand[CreateUser, F](cmd.json)
@@ -33,14 +34,35 @@ class CommandHttp[F[_]: Effect](userAuth: UserAuth, userService: UserService[F])
                                    }
                        user <- userService.createUser(userCmd)
                      } yield user.asJson
+
+                   } else if (cmd.commandName == GetAllUsers.commandName) {
+                     for {
+                       _     <- ensureCommand[GetAllUsers, F](cmd.json, sender)
+                       users <- userService.getAllUsers
+                     } yield users.asJson
+
                    } else if (cmd.commandName == CreateCustomer.commandName) {
                      for {
                        userCmd  <- ensureCommand[CreateCustomer, F](cmd.json, sender)
                        customer <- userService.createCustomer(userCmd)
                      } yield customer.asJson
+
+                   } else if (cmd.commandName == GetCustomer.commandName) {
+                     for {
+                       userCmd  <- ensureCommand[GetCustomer, F](cmd.json, sender)
+                       customer <- userService.getCustomer(userCmd)
+                     } yield customer.asJson
+
+                   } else if (cmd.commandName == UpdateCustomer.commandName) {
+                     for {
+                       userCmd  <- ensureCommand[UpdateCustomer, F](cmd.json, sender)
+                       customer <- userService.updateCustomer(userCmd)
+                     } yield customer.asJson
+
                    } else {
                      EitherT.leftT[F, Json](COMMAND_NOT_SUPPORTED)
                    }).value
+
           response <- json.fold(
                        e => BadRequest(Error(e).asJson),
                        Ok(_)

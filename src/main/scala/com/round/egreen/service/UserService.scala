@@ -20,6 +20,9 @@ class UserService[F[_]](eventService: EventService[F], repo: UserRepository[F]) 
   def getUser(username: String)(implicit F: Effect[F]): EitherT[F, String, User] =
     repo.getUser(username)
 
+  def getAllUsers(implicit F: Effect[F]): EitherT[F, String, List[User]] =
+    repo.getAllUsers
+
   def createUser(cmd: CreateUser)(implicit F: Effect[F]): EitherT[F, String, User] =
     for {
       user <- repo
@@ -45,6 +48,9 @@ class UserService[F[_]](eventService: EventService[F], repo: UserRepository[F]) 
                               cmd.district)
              )
     } yield CustomerUser(user, info)
+
+  def getCustomer(cmd: GetCustomer)(implicit F: Effect[F]): EitherT[F, String, CustomerInfo] =
+    repo.getCustomerInfo(cmd.userId)
 
   def updateCustomer(cmd: UpdateCustomer)(implicit F: Effect[F]): EitherT[F, String, CustomerInfo] =
     for {

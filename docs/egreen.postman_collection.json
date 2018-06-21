@@ -1,10 +1,42 @@
 {
 	"info": {
-		"_postman_id": "245fa0d7-eba9-44d7-bf77-504ee6cae5da",
+		"_postman_id": "a965bb4c-119b-4a4d-a5a4-381175e05421",
 		"name": "egreen",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
+		{
+			"name": "Check User Exists",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"commandName\": \"com.round.egreen.cqrs.command.CreateUser\",\n    \"json\": \"{ \\\"username\\\": \\\"enzief\\\", \\\"encryptedPassword\\\": \\\"abc\\\", \\\"roles\\\": [ {\\\"Developer\\\": {} } ] }\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:9000/auth/enzief",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"auth",
+						"enzief"
+					]
+				}
+			},
+			"response": []
+		},
 		{
 			"name": "Create User",
 			"request": {
@@ -44,12 +76,19 @@
 			"response": []
 		},
 		{
-			"name": "Check User Exists",
+			"name": "Get All Users",
 			"request": {
 				"auth": {
-					"type": "noauth"
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjYzNTE3ZGQyLWJmN2EtNDYwZi1hZjUzLWRhOGNiMjQ5ZTZlZiIsInVzZXJuYW1lIjoiZWdyZWVuIiwicm9sZXMiOlt7IkRldmVsb3BlciI6e319XSwiZXhwaXJhdGlvbiI6MTY4NzIyODQwOCwiaXNzdWVkQXQiOjE1Mjk0NDM2NDh9.4NPWx4Ksn2LLdpwBysIX71EY8Q1PWnMbbDmLhaplu0M",
+							"type": "string"
+						}
+					]
 				},
-				"method": "GET",
+				"method": "POST",
 				"header": [
 					{
 						"key": "Content-Type",
@@ -58,18 +97,17 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"commandName\": \"com.round.egreen.cqrs.command.CreateUser\",\n    \"json\": \"{ \\\"username\\\": \\\"enzief\\\", \\\"encryptedPassword\\\": \\\"abc\\\", \\\"roles\\\": [ {\\\"Developer\\\": {} } ] }\"\n}"
+					"raw": "{\n    \"commandName\": \"com.round.egreen.cqrs.command.GetAllUsers\",\n    \"json\": \"{}\"\n}"
 				},
 				"url": {
-					"raw": "http://localhost:9000/auth/enzief",
+					"raw": "http://localhost:9000/c",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "9000",
 					"path": [
-						"auth",
-						"enzief"
+						"c"
 					]
 				}
 			},
@@ -129,6 +167,82 @@
 				"body": {
 					"mode": "raw",
 					"raw": "{\n    \"commandName\": \"com.round.egreen.cqrs.command.CreateCustomer\",\n    \"json\": \"{ \\\"username\\\": \\\"meof\\\", \\\"encryptedPassword\\\": \\\"abc\\\", \\\"fullName\\\": \\\"Mai Xuan Thua\\\", \\\"phoneNumber\\\": \\\"098767545321\\\", \\\"address\\\": \\\"australia\\\", \\\"district\\\": { \\\"GoVap\\\": {} } }\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:9000/c",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"c"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Customer",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjYzNTE3ZGQyLWJmN2EtNDYwZi1hZjUzLWRhOGNiMjQ5ZTZlZiIsInVzZXJuYW1lIjoiZWdyZWVuIiwicm9sZXMiOlt7IkRldmVsb3BlciI6e319XSwiZXhwaXJhdGlvbiI6MTY4NzIyODQwOCwiaXNzdWVkQXQiOjE1Mjk0NDM2NDh9.4NPWx4Ksn2LLdpwBysIX71EY8Q1PWnMbbDmLhaplu0M",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"commandName\": \"com.round.egreen.cqrs.command.UpdateCustomer\",\n    \"json\": \"{ \\\"id\\\": \\\"21975a6c-0fb7-421b-b508-f092bdae0a18\\\", \\\"username\\\": \\\"meof\\\", \\\"encryptedPassword\\\": \\\"abc\\\", \\\"fullName\\\": \\\"Mai Xuan Thua Mai Ngan Nam\\\", \\\"phoneNumber\\\": \\\"098767545321\\\", \\\"address\\\": \\\"saigon\\\", \\\"district\\\": { \\\"GoVap\\\": {} } }\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:9000/c",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"c"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Customer",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjYzNTE3ZGQyLWJmN2EtNDYwZi1hZjUzLWRhOGNiMjQ5ZTZlZiIsInVzZXJuYW1lIjoiZWdyZWVuIiwicm9sZXMiOlt7IkRldmVsb3BlciI6e319XSwiZXhwaXJhdGlvbiI6MTY4NzIyODQwOCwiaXNzdWVkQXQiOjE1Mjk0NDM2NDh9.4NPWx4Ksn2LLdpwBysIX71EY8Q1PWnMbbDmLhaplu0M",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"commandName\": \"com.round.egreen.cqrs.command.GetCustomer\",\n    \"json\": \"{ \\\"userId\\\": \\\"21975a6c-0fb7-421b-b508-f092bdae0a18\\\" }\"\n}"
 				},
 				"url": {
 					"raw": "http://localhost:9000/c",
