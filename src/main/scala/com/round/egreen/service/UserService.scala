@@ -20,6 +20,9 @@ class UserService[F[_]](eventService: EventService[F], repo: UserRepository[F]) 
   def getUser(username: String)(implicit F: Effect[F]): EitherT[F, String, User] =
     repo.getUser(username)
 
+  def getUser(userId: UUID)(implicit F: Effect[F]): EitherT[F, String, User] =
+    repo.getUser(userId)
+
   def getAllUsers(implicit F: Effect[F]): EitherT[F, String, List[User]] =
     repo.getAllUsers
 

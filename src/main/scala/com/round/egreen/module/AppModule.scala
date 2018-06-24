@@ -44,17 +44,29 @@ class HttpModule[F[_]: Effect](mongodbModule: MongoModule,
   val userRepo: UserRepository[F] =
     new RedisUserRepository(redisModule.client, config)
 
+  val productRepo: ProductRepository[F] =
+    new RedisProductRepository(redisModule.client, config)
+
+  val purchaseRepo: PurchaseRepository[F] =
+    new RedisPurchaseRepository(redisModule.client, config)
+
   val eventService: EventService[F] =
     new EventService(eventRepo, userRepo)
 
   val userService: UserService[F] =
     new UserService(eventService, userRepo)
 
+  val productService: ProductService[F] =
+    new ProductService(eventService, productRepo)
+
+  val purchaseService: PurchaseService[F] =
+    new PurchaseService(eventService, userService, productService, purchaseRepo)
+
   val unauthService: HttpService[F] =
     new UnauthHttp(userAuth, userService).service
 
   val commandService: HttpService[F] =
-    new CommandHttp[F](userAuth, userService).service
+    new CommandHttp[F](userAuth, userService, productService, purchaseService).service
 
   val coreService: HttpService[F] =
     new CoreHttp[F](new CoreService).service

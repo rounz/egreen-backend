@@ -24,8 +24,10 @@ object ServerStream {
 
   def replayStream[F[_]: Effect](eventRepo: EventRepository[F],
                                  userRepo: UserRepository[F],
+                                 productRepo: ProductRepository[F],
+                                 purchaseRepo: PurchaseRepository[F],
                                  requestShutdown: F[Unit]): Stream[F, StreamApp.ExitCode] = {
-    val replayService: ReplayService[F] = new ReplayService[F](userRepo)
+    val replayService: ReplayService[F] = new ReplayService[F](userRepo, productRepo, purchaseRepo)
     eventRepo.eventStream.evalMap(
       replayService
         .replay(_)
@@ -50,7 +52,11 @@ object ServerStream {
       .serve
 
     if (config.getBoolean("application.replay")) {
-      replayStream(httpModule.eventRepo, httpModule.userRepo, requestShutdown).drain ++
+      replayStream(httpModule.eventRepo,
+                   httpModule.userRepo,
+                   httpModule.productRepo,
+                   httpModule.purchaseRepo,
+                   requestShutdown).drain ++
       serverStream
     } else {
       serverStream

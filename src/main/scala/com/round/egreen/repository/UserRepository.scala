@@ -18,6 +18,7 @@ import io.circe.syntax._
 trait UserRepository[F[_]] {
   def checkUserExists(username: String)(implicit F: Effect[F]): EitherT[F, String, Boolean]
   def getUser(username: String)(implicit F: Effect[F]): EitherT[F, String, User]
+  def getUser(userId: UUID)(implicit F: Effect[F]): EitherT[F, String, User]
   def getAllUsers(implicit F: Effect[F]): EitherT[F, String, List[User]]
   def putUser(user: User)(implicit F: Effect[F]): EitherT[F, String, Unit]
   def getCustomerInfo(userId: UUID)(implicit F: Effect[F]): EitherT[F, String, CustomerInfo]
@@ -47,6 +48,12 @@ class RedisUserRepository[F[_]](client: RedisClientPool, config: Config) extends
   def getUser(username: String)(implicit F: Effect[F]): EitherT[F, String, User] =
     EitherT(
       F.delay(client.withClient(_.hget[User](hash.USERNAME, username))).attempt
+    ).leftMap(_ => USER_READ_ERROR)
+      .subflatMap(_.toRight(USER_NOTFOUND))
+
+  def getUser(userId: UUID)(implicit F: Effect[F]): EitherT[F, String, User] =
+    EitherT(
+      F.delay(client.withClient(_.hget[User](hash.USERID, userId))).attempt
     ).leftMap(_ => USER_READ_ERROR)
       .subflatMap(_.toRight(USER_NOTFOUND))
 

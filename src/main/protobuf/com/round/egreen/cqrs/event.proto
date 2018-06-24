@@ -3,6 +3,7 @@ syntax = "proto2";
 package com.round.egreen.cqrs.event;
 
 import "scalapb/scalapb.proto";
+import "com/round/egreen/common/model/model.proto";
 
 option (scalapb.options) = {
   single_file: true
@@ -41,4 +42,37 @@ message UpdateCustomer {
   optional string phoneNumber = 5;
   optional string address = 6;
   optional string district = 7 [(scalapb.field).type = "District"];
+}
+
+message CreateProductPackage {
+  option (scalapb.message).extends = "Event";
+  option (scalapb.message).companion_extends = "EventCompanion[CreateProductPackage]";
+
+  optional string id = 1 [(scalapb.field).type = "UUID"];
+  optional float amount = 2;
+  optional int32 frequency = 3;
+  optional int32 price = 4;
+}
+
+message UpdateProductPackage {
+  option (scalapb.message).extends = "Event";
+  option (scalapb.message).companion_extends = "EventCompanion[UpdateProductPackage]";
+
+  optional string id = 1 [(scalapb.field).type = "UUID"];
+  optional bool active = 2;
+  optional float amount = 3;
+  optional int32 frequency = 4;
+  optional int32 price = 5;
+}
+
+message CreateProductSubscription {
+  option (scalapb.message).extends = "Event";
+  option (scalapb.message).companion_extends = "EventCompanion[CreateProductSubscription]";
+
+  optional string id = 1 [(scalapb.field).type = "UUID"];
+  optional string packageId = 2 [(scalapb.field).type = "UUID"];
+  optional string customerId = 3 [(scalapb.field).type = "UUID"];
+  optional com.round.egreen.common.model.EgreenWeek startWeek = 4;
+  optional com.round.egreen.common.model.EgreenWeek endWeek = 5;
+  optional float totalAmount = 6;
 }

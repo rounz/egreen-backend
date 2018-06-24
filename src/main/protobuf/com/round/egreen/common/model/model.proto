@@ -1,0 +1,16 @@
+syntax = "proto2";
+
+package com.round.egreen.common.model;
+
+import "scalapb/scalapb.proto";
+
+option (scalapb.options) = {
+  single_file: true
+};
+
+message EgreenWeek {
+  option (scalapb.message).companion_extends = "EgreenWeekCompanion";
+
+  required int32 week = 1;
+  required int32 year = 2;
+}

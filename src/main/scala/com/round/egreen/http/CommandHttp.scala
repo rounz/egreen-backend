@@ -7,7 +7,7 @@ import cats.effect.Effect
 import cats.implicits._
 import com.round.egreen.common.model.Error
 import com.round.egreen.cqrs.command._
-import com.round.egreen.service.{UserAuth, UserService}
+import com.round.egreen.service._
 import io.circe.{Decoder, Json}
 import io.circe.generic.auto._
 import io.circe.parser._
@@ -16,7 +16,11 @@ import org.http4s._
 import org.http4s.circe._
 import org.http4s.dsl.Http4sDsl
 
-class CommandHttp[F[_]: Effect](userAuth: UserAuth, userService: UserService[F]) extends Http4sDsl[F] {
+class CommandHttp[F[_]: Effect](userAuth: UserAuth,
+                                userService: UserService[F],
+                                productService: ProductService[F],
+                                purchaseService: PurchaseService[F])
+    extends Http4sDsl[F] {
   import CommandHttp._
   import UserAuth.UserClaim
 
@@ -58,6 +62,36 @@ class CommandHttp[F[_]: Effect](userAuth: UserAuth, userService: UserService[F])
                        userCmd  <- ensureCommand[UpdateCustomer, F](cmd.json, sender)
                        customer <- userService.updateCustomer(userCmd)
                      } yield customer.asJson
+
+                   } else if (cmd.commandName == CreateProductPackage.commandName) {
+                     for {
+                       pCmd    <- ensureCommand[CreateProductPackage, F](cmd.json, sender)
+                       product <- productService.createPackage(pCmd)
+                     } yield product.asJson
+
+                   } else if (cmd.commandName == UpdateProductPackage.commandName) {
+                     for {
+                       pCmd    <- ensureCommand[UpdateProductPackage, F](cmd.json, sender)
+                       product <- productService.updatePackage(pCmd)
+                     } yield product.asJson
+
+                   } else if (cmd.commandName == GetAllProductPackages.commandName) {
+                     for {
+                       _  <- ensureCommand[GetAllProductPackages, F](cmd.json, sender)
+                       ps <- productService.getAllPackages
+                     } yield ps.asJson
+
+                   } else if (cmd.commandName == CreateProductSubscription.commandName) {
+                     for {
+                       pCmd <- ensureCommand[CreateProductSubscription, F](cmd.json, sender)
+                       subs <- purchaseService.createSubscription(pCmd)
+                     } yield subs.asJson
+
+                   } else if (cmd.commandName == GetAllProductSubscriptions.commandName) {
+                     for {
+                       _    <- ensureCommand[GetAllProductSubscriptions, F](cmd.json, sender)
+                       subs <- purchaseService.getAllSubscriptions
+                     } yield subs.asJson
 
                    } else {
                      EitherT.leftT[F, Json](COMMAND_NOT_SUPPORTED)

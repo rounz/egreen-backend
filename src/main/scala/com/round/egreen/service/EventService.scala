@@ -6,7 +6,7 @@ import cats.data.EitherT
 import cats.effect.Effect
 import cats.implicits._
 import com.round.egreen.common.districtTMap
-import com.round.egreen.common.model.{CustomerInfo, User}
+import com.round.egreen.common.model._
 import com.round.egreen.cqrs.event._
 import com.round.egreen.repository.{EventRepository, UserRepository}
 
@@ -38,4 +38,32 @@ final class EventService[F[_]](repo: EventRepository[F], userRepo: UserRepositor
           )
       _ <- userRepo.putCustomerInfo(customerInfo)
     } yield customerInfo
+
+  def createPackage(p: ProductPackage)(implicit F: Effect[F]): EitherT[F, String, ProductPackage] =
+    for {
+      _ <- repo.saveEvent(
+            CreateProductPackage(p.id.some, p.amount.some, p.frequency.some, p.price.some).envelope
+          )
+    } yield p
+
+  def updatePackage(p: ProductPackage)(implicit F: Effect[F]): EitherT[F, String, ProductPackage] =
+    for {
+      _ <- repo.saveEvent(
+            UpdateProductPackage(p.id.some, p.active.some, p.amount.some, p.frequency.some, p.price.some).envelope
+          )
+    } yield p
+
+  def createSubscription(s: ProductSubscription)(implicit F: Effect[F]): EitherT[F, String, ProductSubscription] =
+    for {
+      _ <- repo.saveEvent(
+            CreateProductSubscription(
+              s.id.some,
+              s.packageId.some,
+              s.customerId.some,
+              s.startWeek.some,
+              s.endWeek.some,
+              s.totalAmount.some
+            ).envelope
+          )
+    } yield s
 }

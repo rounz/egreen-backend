@@ -257,6 +257,196 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Create Product Package",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjYzNTE3ZGQyLWJmN2EtNDYwZi1hZjUzLWRhOGNiMjQ5ZTZlZiIsInVzZXJuYW1lIjoiZWdyZWVuIiwicm9sZXMiOlt7IkRldmVsb3BlciI6e319XSwiZXhwaXJhdGlvbiI6MTY4NzIyODQwOCwiaXNzdWVkQXQiOjE1Mjk0NDM2NDh9.4NPWx4Ksn2LLdpwBysIX71EY8Q1PWnMbbDmLhaplu0M",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"commandName\": \"com.round.egreen.cqrs.command.CreateProductPackage\",\n    \"json\": \"{ \\\"amount\\\": 100, \\\"frequency\\\": 5, \\\"price\\\": 140 }\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:9000/c",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"c"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Product Package",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjYzNTE3ZGQyLWJmN2EtNDYwZi1hZjUzLWRhOGNiMjQ5ZTZlZiIsInVzZXJuYW1lIjoiZWdyZWVuIiwicm9sZXMiOlt7IkRldmVsb3BlciI6e319XSwiZXhwaXJhdGlvbiI6MTY4NzIyODQwOCwiaXNzdWVkQXQiOjE1Mjk0NDM2NDh9.4NPWx4Ksn2LLdpwBysIX71EY8Q1PWnMbbDmLhaplu0M",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"commandName\": \"com.round.egreen.cqrs.command.UpdateProductPackage\",\n    \"json\": \"{ \\\"id\\\": \\\"abd93336-4a42-4947-b02c-c20a34978123\\\", \\\"active\\\": true,\\\"amount\\\": 188, \\\"frequency\\\": 5, \\\"price\\\": 140 }\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:9000/c",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"c"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Packages",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjYzNTE3ZGQyLWJmN2EtNDYwZi1hZjUzLWRhOGNiMjQ5ZTZlZiIsInVzZXJuYW1lIjoiZWdyZWVuIiwicm9sZXMiOlt7IkRldmVsb3BlciI6e319XSwiZXhwaXJhdGlvbiI6MTY4NzIyODQwOCwiaXNzdWVkQXQiOjE1Mjk0NDM2NDh9.4NPWx4Ksn2LLdpwBysIX71EY8Q1PWnMbbDmLhaplu0M",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"commandName\": \"com.round.egreen.cqrs.command.GetAllProductPackages\",\n    \"json\": \"{}\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:9000/c",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"c"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Subscriptions",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjYzNTE3ZGQyLWJmN2EtNDYwZi1hZjUzLWRhOGNiMjQ5ZTZlZiIsInVzZXJuYW1lIjoiZWdyZWVuIiwicm9sZXMiOlt7IkRldmVsb3BlciI6e319XSwiZXhwaXJhdGlvbiI6MTY4NzIyODQwOCwiaXNzdWVkQXQiOjE1Mjk0NDM2NDh9.4NPWx4Ksn2LLdpwBysIX71EY8Q1PWnMbbDmLhaplu0M",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"commandName\": \"com.round.egreen.cqrs.command.GetAllProductSubscriptions\",\n    \"json\": \"{}\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:9000/c",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"c"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Product Subscription",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjYzNTE3ZGQyLWJmN2EtNDYwZi1hZjUzLWRhOGNiMjQ5ZTZlZiIsInVzZXJuYW1lIjoiZWdyZWVuIiwicm9sZXMiOlt7IkRldmVsb3BlciI6e319XSwiZXhwaXJhdGlvbiI6MTY4NzIyODQwOCwiaXNzdWVkQXQiOjE1Mjk0NDM2NDh9.4NPWx4Ksn2LLdpwBysIX71EY8Q1PWnMbbDmLhaplu0M",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"commandName\": \"com.round.egreen.cqrs.command.CreateProductSubscription\",\n    \"json\": \"{ \\\"customerId\\\": \\\"21975a6c-0fb7-421b-b508-f092bdae0a18\\\", \\\"packageId\\\": \\\"abd93346-4a42-4947-b02c-c20a34978123\\\", \\\"startWeek\\\": { \\\"week\\\": 1, \\\"year\\\": 2018 }, \\\"endWeek\\\": { \\\"week\\\": 10, \\\"year\\\": 2018 }, \\\"totalAmount\\\": 140 }\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:9000/c",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"c"
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }

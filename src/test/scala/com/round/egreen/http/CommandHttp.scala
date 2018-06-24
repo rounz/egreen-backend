@@ -47,7 +47,7 @@ class CommandHttpSpec extends WordSpec with Matchers with Http4sDsl[IO] {
 
     "ensureCommand correctly" in {
       val parsed: Either[String, CreateUser] = CommandHttp
-        .ensureCommand[CreateUser, IO](cmdJson, UserClaim(userId, "", Set(Admin), 0, 0))
+        .ensureCommand[CreateUser, IO](cmdJson, UserClaim(userId, "", Set(Developer), 0, 0))
         .value
         .unsafeRunSync()
       parsed shouldBe Right(cmdCreateUser)
@@ -65,9 +65,9 @@ class CommandHttpSpec extends WordSpec with Matchers with Http4sDsl[IO] {
   "CommandHttp service" should {
     val config: Config    = ConfigFactory.parseString("application.secret = abcd")
     val auth: UserAuth    = new UserAuth(config)
-    val sender: UserClaim = UserClaim(userId, "asdf", Set(Admin), 0, 0)
+    val sender: UserClaim = UserClaim(userId, "asdf", Set(Developer), 0, 0)
 
-    val service: HttpService[IO] = new CommandHttp(auth, new MockUserService(userId)).service
+    val service: HttpService[IO] = new CommandHttp(auth, new MockUserService(userId), null, null).service
 
     "parse and process CreateUser command" in {
       val token: String = auth.authToken(User(userId, sender.username, "", sender.roles))
