@@ -23,12 +23,14 @@ trait UserRepository[F[_]] {
   def putUser(user: User)(implicit F: Effect[F]): EitherT[F, String, Unit]
   def getCustomerInfo(userId: UUID)(implicit F: Effect[F]): EitherT[F, String, CustomerInfo]
   def putCustomerInfo(customerInfo: CustomerInfo)(implicit F: Effect[F]): EitherT[F, String, Unit]
+  def getAllCustomers(implicit F: Effect[F]): EitherT[F, String, List[CustomerInfo]]
 }
 
 object UserRepository {
-  val USER_NOTFOUND: String    = "user.notfound"
-  val USER_WRITE_ERROR: String = "user.write-error"
-  val USER_READ_ERROR: String  = "user.read-error"
+  val USER_NOTFOUND: String     = "user.notfound"
+  val USER_WRITE_ERROR: String  = "user.write-error"
+  val USER_READ_ERROR: String   = "user.read-error"
+  val CUSTOMER_NOTFOUND: String = "customer.notfound"
 }
 
 class RedisUserRepository[F[_]](client: RedisClientPool, config: Config) extends UserRepository[F] {
@@ -92,6 +94,12 @@ class RedisUserRepository[F[_]](client: RedisClientPool, config: Config) extends
         .attempt
     ).leftMap(_ => USER_WRITE_ERROR)
       .map(_ => ())
+
+  def getAllCustomers(implicit F: Effect[F]): EitherT[F, String, List[CustomerInfo]] =
+    EitherT(
+      F.delay(client.withClient(_.hgetall1[String, CustomerInfo](hash.CUSTOMER_INFO))).attempt
+    ).leftMap(_ => USER_READ_ERROR)
+      .subflatMap(_.map(_.values.toList).toRight(CUSTOMER_NOTFOUND))
 }
 
 object RedisUserRepository {

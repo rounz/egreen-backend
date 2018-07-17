@@ -61,6 +61,9 @@ class UserService[F[_]](eventService: EventService[F], repo: UserRepository[F]) 
                        CustomerInfo(cmd.id, cmd.fullName, cmd.phoneNumber, cmd.address, cmd.district)
                      )
     } yield customerInfo
+
+  def getAllCustomers(implicit F: Effect[F]): EitherT[F, String, List[CustomerInfo]] =
+    repo.getAllCustomers
 }
 
 object UserService {

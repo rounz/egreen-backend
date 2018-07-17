@@ -83,6 +83,12 @@ final case class GetCustomer(
 
 object GetCustomer extends CommandCompanion[GetCustomer](Set(Admin))
 
+final case class GetAllCustomers(
+    )
+    extends Command[GetAllCustomers]
+
+object GetAllCustomers extends CommandCompanion[GetAllCustomers](Set(Admin))
+
 final case class UserLogin(
     username: String,
     encryptedPassword: String

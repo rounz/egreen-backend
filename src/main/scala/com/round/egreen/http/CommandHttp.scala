@@ -63,6 +63,12 @@ class CommandHttp[F[_]: Effect](userAuth: UserAuth,
                        customer <- userService.updateCustomer(userCmd)
                      } yield customer.asJson
 
+                   } else if (cmd.commandName == GetAllCustomers.commandName) {
+                     for {
+                       _  <- ensureCommand[GetAllCustomers, F](cmd.json, sender)
+                       cs <- userService.getAllCustomers
+                     } yield cs.asJson
+
                    } else if (cmd.commandName == CreateProductPackage.commandName) {
                      for {
                        pCmd    <- ensureCommand[CreateProductPackage, F](cmd.json, sender)
